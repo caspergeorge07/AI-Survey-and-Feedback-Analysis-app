@@ -33,6 +33,7 @@ Edit `backend/.env` and set:
 ```env
 OPENAI_API_KEY=sk-your-api-key-here
 OPENAI_MODEL=gpt-4o-mini
+OPENAI_ANALYSIS_BATCH_SIZE=50
 FRONTEND_ORIGIN=http://localhost:3000
 ```
 
@@ -131,4 +132,4 @@ Check that your API key is valid, your account has API access, and the model in 
 
 ### Large files are slow
 
-This MVP sends the selected feedback column to the model in one request. For larger datasets, add batching and background jobs later.
+The backend analyses responses in batches using `OPENAI_ANALYSIS_BATCH_SIZE`, which defaults to `50`. Larger files will still take longer because each batch is analysed by the OpenAI API before the backend consolidates themes and results.

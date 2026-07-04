@@ -5,6 +5,8 @@ import logging
 import os
 import textwrap
 from collections import Counter
+from dataclasses import dataclass
+from difflib import get_close_matches
 from typing import Literal, Sequence, TypeVar
 
 import pandas as pd
@@ -15,6 +17,9 @@ from pydantic import BaseModel, Field, ValidationError
 
 Sentiment = Literal["positive", "neutral", "negative"]
 logger = logging.getLogger(__name__)
+DEFAULT_BATCH_SIZE = 50
+MIN_BATCH_SIZE = 1
+MAX_BATCH_SIZE = 100
 
 
 class AnalysedResponse(BaseModel):
@@ -96,6 +101,13 @@ class AnalysisResult(BaseModel):
 PayloadT = TypeVar("PayloadT", bound=BaseModel)
 
 
+@dataclass(frozen=True)
+class FeedbackBatch:
+    batch_number: int
+    start_index: int
+    responses: list[str]
+
+
 def clean_feedback_values(series: pd.Series) -> list[str]:
     values: list[str] = []
     for value in series.dropna().astype(str).tolist():
@@ -120,31 +132,92 @@ def analyse_feedback_with_openai(feedback_values: list[str]) -> OpenAIAnalysisPa
         )
 
     model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    batch_size = _analysis_batch_size()
     client = OpenAI(api_key=api_key)
 
-    individual = _analyse_individual_responses(client, model, feedback_values)
-    candidates = _identify_candidate_themes(client, model, individual)
-    canonical = _merge_similar_themes(client, model, candidates)
-    assignments = _reassign_to_canonical_themes(
-        client,
-        model,
-        feedback_values,
-        individual,
-        canonical,
+    batches = list(_feedback_batches(feedback_values, batch_size))
+    batch_individuals: list[IndividualAnalysisPayload] = []
+    candidate_theme_sets: list[CandidateThemesPayload] = []
+
+    for batch in batches:
+        try:
+            individual = _analyse_individual_responses(
+                client,
+                model,
+                batch.responses,
+                start_index=batch.start_index,
+                batch_number=batch.batch_number,
+            )
+            candidates = _identify_candidate_themes(
+                client,
+                model,
+                individual,
+                batch_number=batch.batch_number,
+            )
+        except HTTPException as exc:
+            _raise_batch_failure(batch, "batch analysis and theme discovery", exc)
+
+        batch_individuals.append(individual)
+        candidate_theme_sets.append(candidates)
+
+    individual = IndividualAnalysisPayload(
+        results=sorted(
+            [
+                item
+                for batch_payload in batch_individuals
+                for item in batch_payload.results
+            ],
+            key=lambda item: item.response_index,
+        )
     )
+    candidates = CandidateThemesPayload(
+        themes=[
+            theme
+            for batch_payload in candidate_theme_sets
+            for theme in batch_payload.themes
+        ]
+    )
+    canonical = _merge_similar_themes(client, model, candidates)
+
+    batch_assignments: list[ResponseThemeAssignment] = []
+    for batch, batch_individual in zip(batches, batch_individuals, strict=True):
+        try:
+            assignments = _reassign_to_canonical_themes(
+                client,
+                model,
+                batch.responses,
+                batch_individual,
+                canonical,
+                start_index=batch.start_index,
+                batch_number=batch.batch_number,
+            )
+        except HTTPException as exc:
+            _raise_batch_failure(batch, "canonical reassignment, sentiment, and confidence", exc)
+
+        batch_assignments.extend(assignments.results)
+
+    assignments = ReassignedResponsesPayload(
+        results=sorted(batch_assignments, key=lambda item: item.response_index)
+    )
+    _validate_indexed_results(
+        "merged batch reassignment",
+        assignments.results,
+        expected_indexes=set(range(len(feedback_values))),
+    )
+
     insights = _generate_executive_insights(
         client,
         model,
-        feedback_values,
+        individual,
         assignments,
         canonical,
     )
 
-    canonical_names = {theme.name.casefold(): theme.name for theme in canonical.themes}
+    canonical_names = _canonical_theme_name_lookup(canonical)
     results = [
         AnalysedResponse(
             original_response=feedback_values[item.response_index],
-            theme=canonical_names.get(item.theme.casefold(), item.theme),
+            theme=canonical_names.get(_normalise_theme_name(item.theme), item.theme),
             sentiment=item.sentiment,
             confidence=item.confidence,
             reason=item.reason,
@@ -158,6 +231,50 @@ def analyse_feedback_with_openai(feedback_values: list[str]) -> OpenAIAnalysisPa
         executive_summary=insights.executive_summary,
         recommended_actions=insights.recommended_actions,
     )
+
+
+def _analysis_batch_size() -> int:
+    configured = os.getenv("OPENAI_ANALYSIS_BATCH_SIZE")
+    if not configured:
+        return DEFAULT_BATCH_SIZE
+
+    try:
+        batch_size = int(configured)
+    except ValueError:
+        logger.warning("Invalid OPENAI_ANALYSIS_BATCH_SIZE; using default")
+        return DEFAULT_BATCH_SIZE
+
+    if batch_size < MIN_BATCH_SIZE or batch_size > MAX_BATCH_SIZE:
+        logger.warning("OPENAI_ANALYSIS_BATCH_SIZE out of range; using default")
+        return DEFAULT_BATCH_SIZE
+
+    return batch_size
+
+
+def _feedback_batches(feedback_values: list[str], batch_size: int) -> Sequence[FeedbackBatch]:
+    return [
+        FeedbackBatch(
+            batch_number=(start // batch_size) + 1,
+            start_index=start,
+            responses=feedback_values[start : start + batch_size],
+        )
+        for start in range(0, len(feedback_values), batch_size)
+    ]
+
+
+def _raise_batch_failure(batch: FeedbackBatch, stage: str, exc: HTTPException) -> None:
+    logger.exception(
+        "Batch analysis stage failed",
+        extra={"batch": batch.batch_number, "stage": stage, "responses": len(batch.responses)},
+    )
+    raise HTTPException(
+        status_code=exc.status_code,
+        detail=(
+            f"Analysis failed for batch {batch.batch_number} during {stage}. "
+            "No partial analysis CSV was saved. "
+            f"Cause: {exc.detail}"
+        ),
+    ) from exc
 
 
 def _request_structured_payload(
@@ -206,14 +323,13 @@ def _request_structured_payload(
 def _validate_indexed_results(
     stage_name: str,
     results: Sequence[IndividualResponseAnalysis | ResponseThemeAssignment],
-    expected_count: int,
+    expected_indexes: set[int],
 ) -> None:
     indexes = [item.response_index for item in results]
-    expected_indexes = set(range(expected_count))
-    if len(indexes) != expected_count or set(indexes) != expected_indexes:
+    if len(indexes) != len(expected_indexes) or set(indexes) != expected_indexes:
         logger.error(
             "OpenAI returned mismatched indexed analysis results",
-            extra={"stage": stage_name, "expected": expected_count, "actual": len(indexes)},
+            extra={"stage": stage_name, "expected": len(expected_indexes), "actual": len(indexes)},
         )
         raise HTTPException(
             status_code=502,
@@ -225,6 +341,9 @@ def _analyse_individual_responses(
     client: OpenAI,
     model: str,
     feedback_values: list[str],
+    *,
+    start_index: int,
+    batch_number: int,
 ) -> IndividualAnalysisPayload:
     prompt = textwrap.dedent(
         """
@@ -242,22 +361,29 @@ def _analyse_individual_responses(
         }
 
         Rules:
-        - Use zero-based response_index values exactly as provided.
+        - Use response_index values exactly as provided.
         - Include one result for every response in the input list.
         - Do not invent facts beyond the response text.
         - Candidate themes should be specific enough to preserve useful nuance.
         """
     ).strip()
 
+    stage_name = f"stage 1 individual response analysis batch {batch_number}"
     payload = _request_structured_payload(
         client,
         model,
-        "stage 1 individual response analysis",
+        stage_name,
         prompt,
-        {"responses": _indexed_responses(feedback_values)},
+        {"responses": _indexed_responses(feedback_values, start_index=0)},
         IndividualAnalysisPayload,
     )
-    _validate_indexed_results("stage 1 individual response analysis", payload.results, len(feedback_values))
+    _validate_indexed_results(
+        stage_name,
+        payload.results,
+        expected_indexes=set(range(len(feedback_values))),
+    )
+    for item in payload.results:
+        item.response_index += start_index
     payload.results.sort(key=lambda item: item.response_index)
     return payload
 
@@ -266,6 +392,8 @@ def _identify_candidate_themes(
     client: OpenAI,
     model: str,
     individual: IndividualAnalysisPayload,
+    *,
+    batch_number: int,
 ) -> CandidateThemesPayload:
     prompt = textwrap.dedent(
         """
@@ -288,7 +416,7 @@ def _identify_candidate_themes(
     payload = _request_structured_payload(
         client,
         model,
-        "stage 2 candidate theme identification",
+        f"stage 2 candidate theme identification batch {batch_number}",
         prompt,
         {"individual_analyses": [item.model_dump() for item in individual.results]},
         CandidateThemesPayload,
@@ -341,6 +469,9 @@ def _reassign_to_canonical_themes(
     feedback_values: list[str],
     individual: IndividualAnalysisPayload,
     canonical: CanonicalThemesPayload,
+    *,
+    start_index: int,
+    batch_number: int,
 ) -> ReassignedResponsesPayload:
     prompt = textwrap.dedent(
         """
@@ -362,7 +493,7 @@ def _reassign_to_canonical_themes(
         }
 
         Rules:
-        - Use zero-based response_index values exactly as provided.
+        - Use response_index values exactly as provided.
         - Include one result for every response.
         - Theme must exactly match one canonical theme name.
         - Confidence must be between 0 and 1 and reflect certainty in theme and sentiment.
@@ -374,36 +505,30 @@ def _reassign_to_canonical_themes(
     payload = _request_structured_payload(
         client,
         model,
-        "stages 4-6 canonical reassignment sentiment confidence",
+        f"stages 4-6 canonical reassignment sentiment confidence batch {batch_number}",
         prompt,
         {
-            "responses": _indexed_responses(feedback_values),
-            "individual_analyses": [item.model_dump() for item in individual.results],
+            "responses": _indexed_responses(feedback_values, start_index=0),
+            "individual_analyses": [
+                {
+                    **item.model_dump(),
+                    "response_index": item.response_index - start_index,
+                }
+                for item in individual.results
+            ],
             "canonical_themes": [item.model_dump() for item in canonical.themes],
         },
         ReassignedResponsesPayload,
     )
     _validate_indexed_results(
-        "stages 4-6 canonical reassignment sentiment confidence",
+        f"stages 4-6 canonical reassignment sentiment confidence batch {batch_number}",
         payload.results,
-        len(feedback_values),
+        expected_indexes=set(range(len(feedback_values))),
     )
+    for item in payload.results:
+        item.response_index += start_index
 
-    canonical_names = {theme.name.casefold() for theme in canonical.themes}
-    unexpected_themes = [
-        item.theme
-        for item in payload.results
-        if item.theme.casefold() not in canonical_names
-    ]
-    if unexpected_themes:
-        logger.error(
-            "OpenAI assigned responses to non-canonical themes",
-            extra={"unexpected_theme_count": len(unexpected_themes)},
-        )
-        raise HTTPException(
-            status_code=502,
-            detail="OpenAI assigned one or more responses to a non-canonical theme.",
-        )
+    _coerce_assignment_themes(payload.results, canonical)
 
     payload.results.sort(key=lambda item: item.response_index)
     return payload
@@ -412,7 +537,7 @@ def _reassign_to_canonical_themes(
 def _generate_executive_insights(
     client: OpenAI,
     model: str,
-    feedback_values: list[str],
+    individual: IndividualAnalysisPayload,
     assignments: ReassignedResponsesPayload,
     canonical: CanonicalThemesPayload,
 ) -> ExecutiveInsightsPayload:
@@ -442,7 +567,7 @@ def _generate_executive_insights(
         "stages 7-8 executive insights recommended actions",
         prompt,
         {
-            "responses": _indexed_responses(feedback_values),
+            "individual_analyses": [item.model_dump() for item in individual.results],
             "canonical_themes": [item.model_dump() for item in canonical.themes],
             "assignments": [item.model_dump() for item in assignments.results],
             "theme_counts": dict(Counter(item.theme for item in assignments.results).most_common()),
@@ -452,9 +577,48 @@ def _generate_executive_insights(
     )
 
 
-def _indexed_responses(feedback_values: list[str]) -> list[dict[str, str | int]]:
+def _canonical_theme_name_lookup(canonical: CanonicalThemesPayload) -> dict[str, str]:
+    return {
+        _normalise_theme_name(theme.name): theme.name
+        for theme in canonical.themes
+    }
+
+
+def _coerce_assignment_themes(
+    assignments: list[ResponseThemeAssignment],
+    canonical: CanonicalThemesPayload,
+) -> None:
+    canonical_lookup = _canonical_theme_name_lookup(canonical)
+    normalised_names = list(canonical_lookup.keys())
+
+    for item in assignments:
+        normalised_theme = _normalise_theme_name(item.theme)
+        exact_match = canonical_lookup.get(normalised_theme)
+        if exact_match:
+            item.theme = exact_match
+            continue
+
+        close_matches = get_close_matches(normalised_theme, normalised_names, n=1, cutoff=0.72)
+        if close_matches:
+            item.theme = canonical_lookup[close_matches[0]]
+            continue
+
+        logger.warning(
+            "OpenAI assigned a non-canonical theme; using closest available fallback",
+            extra={"response_index": item.response_index},
+        )
+        item.theme = canonical.themes[0].name
+        item.confidence = min(item.confidence, 0.5)
+        item.reason = f"{item.reason} Assigned to the closest available canonical theme."
+
+
+def _normalise_theme_name(value: str) -> str:
+    return "".join(character for character in value.casefold() if character.isalnum())
+
+
+def _indexed_responses(feedback_values: list[str], *, start_index: int) -> list[dict[str, str | int]]:
     return [
-        {"response_index": index, "response": response}
+        {"response_index": start_index + index, "response": response}
         for index, response in enumerate(feedback_values)
     ]
 

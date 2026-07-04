@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## v0.3.0 - Batch Processing & Scalable AI Pipeline
+
+### Added
+- Batch processing for large survey datasets.
+- Configurable batch size.
+- Global theme consolidation.
+- Canonical theme reassignment.
+- Large dataset testing (200 responses).
+
+### Improved
+- Large file reliability.
+- AI scalability.
+- Theme consistency.
+- Partial failure handling.
+
+### Fixed
+- Canonical theme mismatch bug.
+- Large dataset analysis reliability.
+
+### Tested
+- 20 responses
+- 200 responses
+- CSV export
+- Frontend compatibility
+
 ---
 
 ## v0.2.0 - AI Intelligence Engine
