@@ -1,0 +1,13 @@
+respondent_id,department,rating,feedback
+1,Support,5,"The response was fast and the agent solved my issue clearly."
+2,Sales,3,"The product demo was useful, but pricing details were confusing."
+3,Product,2,"The dashboard is slow when I filter large date ranges."
+4,Support,4,"I liked the helpful tone, although I had to repeat my problem twice."
+5,Operations,1,"The export failed several times and I could not finish my report."
+6,Product,5,"The new reporting layout makes it much easier to spot trends."
+7,Sales,3,"Good service overall, but follow-up emails arrived later than promised."
+8,Support,4,"The knowledge base article was clear and saved me time."
+9,Product,2,"Mobile navigation feels awkward and some labels are hard to understand."
+10,Operations,5,"CSV import worked perfectly and reduced manual work for my team."
+11,Support,3,"The issue was fixed, but the ticket status updates were unclear."
+12,Product,4,"I appreciate the cleaner design and faster page loads."

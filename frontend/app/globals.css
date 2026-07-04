@@ -1,0 +1,308 @@
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #17202a;
+  --muted: #617080;
+  --line: #dbe2ea;
+  --accent: #186a83;
+  --accent-strong: #0f5267;
+  --good: #247a4d;
+  --warn: #8a641c;
+  --bad: #a63d40;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+.download-link {
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+}
+
+button:hover,
+.download-link:hover {
+  background: var(--accent-strong);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  padding: 0.75rem;
+}
+
+.shell {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.workspace {
+  margin: 0 auto;
+  max-width: 1180px;
+}
+
+.topbar {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.upload-row {
+  align-items: end;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr auto;
+}
+
+.file-picker {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.file-picker span,
+.section-heading span,
+.muted {
+  color: var(--muted);
+}
+
+.file-picker input {
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  padding: 0.75rem;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.section-heading {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.column-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.column {
+  background: #eef3f6;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.column:hover,
+.column.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.analyse-button {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 760px;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  max-width: 320px;
+  padding: 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eef3f6;
+  color: #344453;
+  font-size: 0.85rem;
+}
+
+td {
+  color: #263442;
+  font-size: 0.9rem;
+}
+
+.results {
+  margin-top: 1rem;
+}
+
+.count-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.count-row {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  text-transform: capitalize;
+}
+
+.response-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.response-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.response-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.response-meta span {
+  background: #eef3f6;
+  border-radius: 999px;
+  color: #344453;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.6rem;
+  text-transform: capitalize;
+}
+
+.sentiment.positive {
+  background: #e7f5ee;
+  color: var(--good);
+}
+
+.sentiment.neutral {
+  background: #f5f0df;
+  color: var(--warn);
+}
+
+.sentiment.negative {
+  background: #fae8e8;
+  color: var(--bad);
+}
+
+.error {
+  background: #fae8e8;
+  border: 1px solid #efc9ca;
+  border-radius: 6px;
+  color: var(--bad);
+  margin: 1rem 0 0;
+  padding: 0.75rem;
+}
+
+.subtle {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.subtle:hover {
+  background: #eef3f6;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    padding: 1rem;
+  }
+
+  .topbar,
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .upload-row,
+  .two {
+    grid-template-columns: 1fr;
+  }
+}
