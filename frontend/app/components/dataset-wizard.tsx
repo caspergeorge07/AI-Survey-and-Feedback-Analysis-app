@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, FormEvent, RefObject, useMemo, useRef, useState } from "react";
+import { AnalysisResult, useAnalysisState } from "./analysis-state";
 import { SectionHeader } from "./shell";
 import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from "./ui";
 
@@ -42,33 +43,6 @@ type UploadResponse = {
   column_profiles: ColumnProfile[];
   feedback_column?: string | null;
   feedback_columns?: string[];
-};
-
-type AnalysedResponse = {
-  original_response: string;
-  theme: string;
-  sentiment: "positive" | "neutral" | "negative";
-  confidence: number;
-  reason: string;
-  source_row_index?: number | null;
-  source_feedback_column?: string | null;
-};
-
-type AnalysisResult = {
-  analysis_id: string;
-  results: AnalysedResponse[];
-  overall: {
-    summary_of_main_themes: string;
-    counts_by_theme: Record<string, number>;
-    counts_by_sentiment: Record<string, number>;
-    executive_summary: string;
-  };
-  download_url: string;
-  report_download_url?: string | null;
-  selected_feedback_columns?: string[];
-  quantitative_summary?: Record<string, unknown>;
-  cross_analysis?: unknown;
-  enhanced_executive_summary?: string | null;
 };
 
 type ColumnConfig = {
@@ -282,6 +256,7 @@ function redactErrorPayload(value: unknown, depth = 0): unknown {
 }
 
 export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWizardProps) {
+  const { setLatestAnalysis } = useAnalysisState();
   const [step, setStep] = useState<WizardStep>("upload");
   const [file, setFile] = useState<File | null>(null);
   const [upload, setUpload] = useState<UploadResponse | null>(null);
@@ -407,6 +382,13 @@ export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWiz
       });
       const data = await readApiResponse<AnalysisResult>(response, "Analysis failed.");
       setAnalysis(data);
+      setLatestAnalysis({
+        analysis: data,
+        completedAt: new Date().toISOString(),
+        filename: upload.filename,
+        rowCount: upload.row_count,
+        selectedFeedbackColumns: selectedQualitativeColumns,
+      });
       setStep("results");
     } catch (caught) {
       setError(userFacingErrorMessage(caught, "Analysis failed. Please review your selections and try again."));
@@ -1186,7 +1168,7 @@ function recommendationTone(confidence: number) {
   return "warning";
 }
 
-function sentimentTone(sentiment: AnalysedResponse["sentiment"]) {
+function sentimentTone(sentiment: AnalysisResult["results"][number]["sentiment"]) {
   if (sentiment === "positive") {
     return "success";
   }

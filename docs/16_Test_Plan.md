@@ -435,16 +435,19 @@ Recommended automation roadmap:
 
 | Test Case | Steps | Expected Result |
 |---|---|---|
-| Executive dashboard renders | Open the application landing page. | Dashboard appears before the analysis wizard and includes welcome, KPIs, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, and quick actions. |
-| KPI cards | Inspect dashboard KPI area. | Total Projects, Analyses Completed, Responses Analysed, and Average Positive Sentiment cards are visible and readable. |
-| Recent analyses table | Inspect Recent Analyses. | Table shows analysis name, project, responses, sentiment, status, and date. |
-| Recent reports section | Inspect Recent Reports. | Report summaries and status badges are visible. |
-| Theme visualisation | Inspect Top Themes. | Theme bars render with text labels and counts. |
-| Sentiment visualisation | Inspect Sentiment. | Sentiment donut and text legend render with positive, neutral, and negative values. |
+| Executive dashboard renders | Open the application landing page. | Dashboard appears before the analysis wizard and includes welcome, KPIs, recent analysis, recent reports, top themes, sentiment, recommended actions, activity, and quick actions. |
+| Empty dashboard state | Open the dashboard before completing an analysis in the current session. | Dashboard shows readable empty states and does not display demo/mock analysis values. |
+| Live dashboard update | Complete an analysis through the Dataset Intelligence Wizard. | Dashboard updates from the latest completed analysis without a page reload. |
+| KPI cards | Inspect dashboard KPI area after analysis. | Responses Analysed, Detected Themes, Sentiment Distribution, Confidence Summary, and Recommended Actions cards are populated from backend analysis output. |
+| Recent analysis table | Inspect Recent Analysis after analysis. | Table shows analysis identifier, dataset name, response count, positive sentiment, complete status, and completion time. |
+| Recent reports section | Inspect Recent Reports after analysis. | CSV and PDF outputs are listed when backend download URLs are returned. |
+| Theme visualisation | Inspect Top Themes after analysis. | Theme bars render from latest `counts_by_theme` values with text labels and counts. |
+| Sentiment visualisation | Inspect Sentiment after analysis. | Sentiment donut and text legend render from latest `counts_by_sentiment` values. |
+| Recommended actions | Inspect Recommended Actions after analysis. | Actions render from backend executive insights when provided, or a safe empty state appears. |
+| Quick action exports | Complete analysis and use dashboard quick links. | Latest CSV and PDF quick links download through existing backend endpoints when available. |
 | Quick action to analysis | Select Start new analysis. | User moves to the existing Dataset Intelligence Wizard section without changing backend behaviour. |
 | Dashboard responsive layout | Check desktop, tablet, and mobile viewports. | Dashboard remains readable, stacks appropriately, and avoids page-level horizontal overflow. |
-| Empty dashboard | Open dashboard with no saved data in future SaaS flow. | Action-first empty state appears. |
-| Returning dashboard | Open dashboard with saved analyses in future SaaS flow. | Insight-first summary and recent work appear. |
+| Session-local state limitation | Reload the page after a completed analysis. | Dashboard returns to empty state until database-backed project history is introduced. |
 
 ### Projects
 
@@ -524,6 +527,7 @@ Before a release:
 - Sprint 6 shell regression passes on desktop, tablet, and mobile viewports.
 - Sidebar collapse and mobile drawer navigation are verified.
 - Sprint 8 dashboard regression passes for KPI cards, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, quick actions, and responsive layout.
+- Sprint 9 live dashboard regression passes for latest-analysis KPIs, top themes, sentiment, recommended actions, recent analysis, recent reports, activity, CSV/PDF quick links, and empty session state.
 - Sprint 7 wizard regression passes across upload, profile, column intelligence, options, review, processing, and results.
 - Column intelligence exposes backend profiling fields without requiring backend behaviour changes.
 - Structured wizard API errors render as readable user-facing text and never as `[object Object]`.
@@ -549,3 +553,4 @@ Before a release:
 | 1.3 | 2026-07-05 | Codex | Added regression tests for qualitative column preselection and incomplete profile fallback mapping. |
 | 1.4 | 2026-07-05 | Codex | Added regression tests for readable structured API error handling in the Dataset Intelligence Wizard. |
 | 1.5 | 2026-07-05 | Codex | Added Sprint 8 Executive Dashboard test cases and release readiness checks. |
+| 1.6 | 2026-07-05 | Codex | Added Sprint 9 live dashboard integration test cases and session-local state coverage. |

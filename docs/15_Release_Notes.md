@@ -29,6 +29,7 @@ For internal engineering history, use [13_Change_Log.md](13_Change_Log.md).
 | Version | Release Name | Status | Summary |
 |---|---|---|---|
 | 1.0 | Documentation Library Version 1 | Draft | Complete professional documentation set for product, engineering, AI, API, brand, testing, and operations. |
+| 0.8 | Live Executive Dashboard Integration | Draft | Replaced dashboard demo data with the latest completed analysis output for the current local session. |
 | 0.7 | Executive Dashboard | Draft | Added the primary dashboard landing experience with KPIs, recent work, themes, sentiment, actions, activity, and quick actions. |
 | 0.6 | Dataset Intelligence Upload Wizard | Draft | Replaced the simple upload flow with a guided wizard for upload, profiling, column intelligence, options, review, processing, and results. |
 | 0.5 | Frontend Foundation | Draft | Added the permanent SurveyIQ application shell, responsive navigation, top bar, and shared UI components. |
@@ -63,7 +64,7 @@ SurveyIQ now opens to an executive dashboard designed for fast review of feedbac
 - Recent activity.
 - Quick actions.
 
-The dashboard currently uses realistic demo data while preserving compatibility with future backend integration and the existing upload-to-report workflow.
+The dashboard now uses the latest completed analysis from the current local session. After users complete analysis, dashboard KPIs, top themes, sentiment, recommended actions, recent analysis, recent reports, recent activity, and CSV/PDF quick links update from real backend output.
 
 ### Dataset Intelligence Upload Wizard
 
@@ -170,6 +171,8 @@ SurveyIQ can generate a management-ready PDF report with:
 - Added a premium upload dropzone with browse fallback, sample dataset download, and supported file guidance.
 - Added review and processing screens that make the current analysis state clearer without pretending live backend progress exists.
 - Added an executive dashboard landing experience that keeps the Dataset Intelligence Wizard available from the same application surface.
+- Replaced executive dashboard demo data with latest-analysis output from the current frontend session.
+- Added live dashboard empty states for sessions where no analysis has been completed yet.
 - Added responsive dashboard layouts for desktop, tablet, and mobile.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
@@ -195,6 +198,7 @@ Current MVP limitations:
 - Local file storage only.
 - No authentication.
 - No database-backed project library.
+- Dashboard latest-analysis state is session-local and resets on full page reload until database-backed projects are introduced.
 - No billing or subscription management.
 - No team collaboration.
 - No enterprise governance.
@@ -244,3 +248,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 | 1.2 | 2026-07-05 | Codex | Added Sprint 6 frontend foundation release notes for the permanent SurveyIQ application shell. |
 | 1.3 | 2026-07-05 | Codex | Added Sprint 7 release notes for the Dataset Intelligence Upload Wizard. |
 | 1.4 | 2026-07-05 | Codex | Added Sprint 8 release notes for the Executive Dashboard landing experience. |
+| 1.5 | 2026-07-05 | Codex | Added Sprint 9 release notes for live dashboard integration with latest completed analysis output. |

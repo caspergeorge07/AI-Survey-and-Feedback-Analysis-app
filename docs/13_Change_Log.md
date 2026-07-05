@@ -39,6 +39,10 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Added
 
+- Sprint 9 Live Executive Dashboard Integration.
+- Lightweight frontend analysis state so the dashboard updates immediately after a completed analysis without authentication or database persistence.
+- Dashboard KPI cards powered by the latest completed analysis: responses analysed, detected themes, sentiment distribution, confidence summary, and recommended actions.
+- Live dashboard sections for top themes, sentiment, recommended actions, recent analysis, recent reports, recent activity, and CSV/PDF quick links.
 - Sprint 8 Executive Dashboard as the primary application landing experience.
 - Dashboard welcome section with action links into the existing analysis workflow.
 - KPI summary cards for total projects, analyses completed, responses analysed, and average positive sentiment.
@@ -73,6 +77,8 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Changed
 
+- Replaced Executive Dashboard mock/demo data with live output from the most recent completed analysis in the current frontend session.
+- Dashboard empty states now appear when no analysis has been completed in the current session.
 - Dashboard is now the active landing page while the existing Dataset Intelligence Wizard remains available on the same page under the Analysis section.
 - Replaced the previous single-panel upload experience with the Dataset Intelligence Wizard while preserving the existing backend API contract.
 - Frontend analysis now sends selected qualitative columns through the existing `feedback_columns` request field.
@@ -118,12 +124,12 @@ The changelog is written for internal product and engineering history. Customer-
 | Sprint 6 | Frontend foundation and application shell | Completed |
 | Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profiling, column intelligence, analysis options, review, processing, and results flow | Completed |
 | Sprint 8 | Executive Dashboard with KPI cards, recent analyses, reports, top themes, sentiment, recommended actions, activity, and quick actions | Completed |
+| Sprint 9 | Live Executive Dashboard Integration replacing mock dashboard data with latest completed analysis output | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 9: Results dashboard and interactive charts | Improve results presentation. | Executive summary layout, theme/sentiment charts, quantitative and segment panels. | Sprint 8, Sprint 5 dataset fields. | Results dashboard preserves CSV/PDF downloads. | Chart accessibility, single/multi-column compatibility. |
 | Sprint 10: Reports and PDF builder UI | Add UI for report workflow. | Reports entry, builder UI, PDF preview/download controls. | Sprint 9, PDF endpoint. | Users can access and download reports from UI. | PDF download regression, report UI smoke tests. |
 | Sprint 11: AI Assistant interface | Add contextual assistant drawer. | Drawer UI, prompt input, suggestions, context display, states. | Sprint 6, Sprint 9 context. | Assistant drawer works without disrupting core workflow. | Drawer, focus, keyboard, and context-boundary tests. |
 | Sprint 12: Authentication and user accounts | Add SaaS account access. | Signup, login, forgot password, sessions, protected routes. | Auth decision, security standards. | Users can create accounts and access protected pages. | Auth, protected route, and security tests. |
@@ -347,3 +353,4 @@ The changelog is written for internal product and engineering history. Customer-
 | 1.4 | 2026-07-05 | Codex | Recorded Sprint 7 bug fix for Dataset Intelligence Wizard qualitative column preselection and fallback profile mapping. |
 | 1.5 | 2026-07-05 | Codex | Recorded Sprint 7 bug fix for readable wizard API error messages and safe structured error handling. |
 | 1.6 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and dashboard regression coverage. |
+| 1.7 | 2026-07-05 | Codex | Recorded Sprint 9 Live Executive Dashboard Integration and latest-analysis state coverage. |

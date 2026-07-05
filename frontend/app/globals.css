@@ -1022,7 +1022,7 @@ td {
 .dashboard-kpi-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .dashboard-kpi-card {
@@ -1220,6 +1220,11 @@ td {
   padding: 0.8rem;
 }
 
+.report-row {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
 .sentiment-legend-row strong {
   font-size: 1rem;
 }
@@ -1265,6 +1270,15 @@ td {
 .activity-feed li div {
   display: grid;
   gap: 0.25rem;
+}
+
+.dashboard-empty-panel {
+  align-items: center;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  min-height: 152px;
+  padding: 0.85rem;
 }
 
 .sr-only {

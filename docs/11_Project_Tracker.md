@@ -92,12 +92,12 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Sprint 6 | Frontend foundation and application shell | Completed |
 | Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profile, column intelligence, analysis options, review, processing, and results | Completed |
 | Sprint 8 | Executive dashboard with KPI cards, recent analyses, recent reports, theme and sentiment visualisations, recommended actions, activity feed, and quick actions | Completed |
+| Sprint 9 | Live Executive Dashboard Integration replacing mock dashboard data with latest completed analysis output | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 9: Results dashboard and interactive charts | Improve results into a management-ready dashboard. | Executive summary-first layout, theme charts, sentiment charts, quantitative panels, segment/cross-analysis panels, response table improvements. | Sprint 7 wizard, Sprint 5 dataset fields, design system chart guidance. | Existing analysis results are presented in a management-ready dashboard while preserving analysed CSV and PDF download paths. | Results rendering tests, chart accessibility checks, CSV/PDF download regression, single-column and multi-column compatibility tests. |
 | Sprint 10: Reports and PDF builder UI | Add UI around the existing PDF report capability. | Reports entry point, report builder UI, section controls where supported, PDF preview/download controls. | Sprint 9, existing PDF endpoint, report wireframes. | Users can generate/access and download PDF reports from the UI while CSV remains available. | PDF download regression, report UI smoke tests, responsive workflow checks. |
 | Sprint 11: AI Assistant interface | Introduce the AI Assistant as a contextual right-side drawer. | Assistant drawer, prompt input, prompt suggestions, context display, loading/error states. | Sprint 6, Sprint 9 context, AI architecture. | Users can open, use, and close the drawer without disrupting core workflows. | Drawer interaction tests, focus/keyboard tests, context-boundary review. |
 | Sprint 12: Authentication and user accounts | Add user account access for SaaS foundation. | Signup, login, forgot password, sessions, protected routes, profile foundation. | Auth provider decision, security standards, app shell. | Users can create accounts, log in, recover access, and reach protected app pages. | Auth functional tests, protected route tests, security review. |
@@ -132,7 +132,7 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | PDF download visibility | P1 | Done | Sprint 6 | Report URL from backend | S | Frontend | User can access generated PDF from the results/report flow. | [14_Known_Issues.md](14_Known_Issues.md) | TBD | UI, download |
 | Responsive app shell | P1 | Done | Sprint 6 | Design system | L | Frontend | Left sidebar/top bar pattern works across desktop, tablet, and mobile. | [05_Design_System.md](05_Design_System.md) | TBD | Responsive, accessibility |
 | Dataset Intelligence Upload Wizard | P1 | Done | Sprint 7 | App shell, upload/analyse APIs, backend column profiles | L | Frontend | Users can move through upload, dataset profile, column intelligence, analysis options, review, processing, and results without backend behaviour changes. | [03_User_Journey.md](03_User_Journey.md), [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, wizard regression, API compatibility, responsive checks |
-| Executive Dashboard | P1 | Done | Sprint 8 | App shell, dashboard wireframes, demo data | M | Frontend | Dashboard is the primary landing experience and shows welcome, KPIs, recent analyses, recent reports, top themes, sentiment, recommended actions, recent activity, and quick actions using mock data. | [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, UI smoke, responsive checks, MVP regression |
+| Executive Dashboard | P1 | Done | Sprint 9 | App shell, dashboard wireframes, latest completed analysis state | M | Frontend | Dashboard is the primary landing experience and shows latest-analysis KPIs, recent analysis, recent reports, top themes, sentiment, recommended actions, recent activity, and quick actions using live analysis output from the current session. | [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, UI smoke, responsive checks, MVP regression, CSV/PDF download regression |
 
 ## 7. Backend
 
@@ -200,7 +200,7 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Feature Name | Priority | Status | Sprint | Dependencies | Estimated Effort | Owner | Definition of Done | Related Documentation | Related GitHub Issue | Testing Required |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Empty dashboard | P1 | Planned | SaaS Foundation | App shell | M | Frontend | New users see action-first dashboard and first-analysis CTA when persistence exists. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI |
-| Returning dashboard | P1 | Done | Sprint 8 | Sprint 6 shell, Sprint 7 wizard, mock data | L | Frontend | Returning-user dashboard shows recent work, top themes, sentiment summaries, recommended actions, activity, and quick actions while preserving the analysis wizard. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, responsive, regression |
+| Returning dashboard | P1 | Done | Sprint 9 | Sprint 6 shell, Sprint 7 wizard, latest analysis state | L | Frontend | Dashboard reflects the most recent completed local analysis with response counts, theme counts, sentiment distribution, confidence summary, recommended actions, CSV/PDF links, and recent activity while preserving the analysis wizard. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, responsive, regression, latest-analysis state regression |
 
 ## 15. Projects
 
@@ -277,3 +277,4 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | 1.1 | 2026-07-05 | Codex | Added agreed Sprint 1-15 plan with completed sprint history and upcoming sprint delivery details. |
 | 1.2 | 2026-07-05 | Codex | Recorded Sprint 7 Dataset Intelligence Upload Wizard completion and updated tracker statuses. |
 | 1.3 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and updated frontend/dashboard tracker statuses. |
+| 1.4 | 2026-07-05 | Codex | Recorded Sprint 9 Live Executive Dashboard Integration and updated dashboard tracker statuses. |
