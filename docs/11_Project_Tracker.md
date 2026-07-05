@@ -89,15 +89,15 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Sprint 3 | OpenAI analysis and CSV export | Completed |
 | Sprint 4 | Multi-stage AI analysis pipeline | Completed |
 | Sprint 5 | Dataset-level feedback intelligence, including column profiling, multiple qualitative columns, quantitative summaries, segment detection, cross-analysis, enhanced executive summary, PDF report updates, and mixed survey test dataset | Completed |
+| Sprint 6 | Frontend foundation and application shell | Completed |
+| Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profile, column intelligence, analysis options, review, processing, and results | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 6: Frontend foundation and application shell | Establish the SurveyIQ frontend foundation and app shell. | Left sidebar, top bar, shared layout, responsive shell, common page states. | Approved wireframes, design system, current frontend. | Existing MVP workflow can sit inside the SurveyIQ shell without regression. | Frontend build, responsive smoke tests, MVP flow regression, accessibility spot check. |
-| Sprint 7: Executive dashboard | Create the first dashboard experience. | Empty dashboard, returning dashboard, summary cards, recent analysis/report areas, theme and sentiment summary surfaces. | Sprint 6, existing analysis outputs. | New users see action-first dashboard; returning users see insight-first summary where data exists. | Empty/populated state tests, UI regression, responsive checks. |
-| Sprint 8: Projects and analysis wizard | Turn the current flow into a guided analysis workflow. | New Analysis, Upload Data, Data Preview, Configure Analysis, Processing, Results transition. | Sprint 6, current upload/analyse APIs, user journey. | Users can complete upload-to-results through a clear wizard. | End-to-end wizard regression, validation tests, error-state tests. |
-| Sprint 9: Results dashboard and interactive charts | Improve results into a management-ready dashboard. | Executive summary-first layout, theme charts, sentiment charts, quantitative panels, segment/cross-analysis panels, response table improvements. | Sprint 8, Sprint 5 dataset fields, design system chart guidance. | Results show old and new analysis outputs without breaking CSV/PDF downloads. | Results rendering tests, chart accessibility checks, single/multi-column response compatibility. |
+| Sprint 8: Executive dashboard | Create the first dashboard experience. | Empty dashboard, returning dashboard, summary cards, recent analysis/report areas, theme and sentiment summary surfaces. | Sprint 6 shell, Sprint 7 wizard, existing analysis outputs. | New users see action-first dashboard; returning users see insight-first summary where data exists. | Empty/populated state tests, UI regression, responsive checks. |
+| Sprint 9: Results dashboard and interactive charts | Improve results into a management-ready dashboard. | Executive summary-first layout, theme charts, sentiment charts, quantitative panels, segment/cross-analysis panels, response table improvements. | Sprint 7 wizard, Sprint 5 dataset fields, design system chart guidance. | Existing analysis results are presented in a management-ready dashboard while preserving analysed CSV and PDF download paths. | Results rendering tests, chart accessibility checks, CSV/PDF download regression, single-column and multi-column compatibility tests. |
 | Sprint 10: Reports and PDF builder UI | Add UI around the existing PDF report capability. | Reports entry point, report builder UI, section controls where supported, PDF preview/download controls. | Sprint 9, existing PDF endpoint, report wireframes. | Users can generate/access and download PDF reports from the UI while CSV remains available. | PDF download regression, report UI smoke tests, responsive workflow checks. |
 | Sprint 11: AI Assistant interface | Introduce the AI Assistant as a contextual right-side drawer. | Assistant drawer, prompt input, prompt suggestions, context display, loading/error states. | Sprint 6, Sprint 9 context, AI architecture. | Users can open, use, and close the drawer without disrupting core workflows. | Drawer interaction tests, focus/keyboard tests, context-boundary review. |
 | Sprint 12: Authentication and user accounts | Add user account access for SaaS foundation. | Signup, login, forgot password, sessions, protected routes, profile foundation. | Auth provider decision, security standards, app shell. | Users can create accounts, log in, recover access, and reach protected app pages. | Auth functional tests, protected route tests, security review. |
@@ -129,8 +129,9 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Upload UI | P0 | Done | MVP | Backend upload endpoint | M | Frontend | Drag-and-drop and browse upload support CSV/Excel guidance. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, accessibility |
 | Data preview UI | P0 | Done | MVP | Upload response | M | Frontend | First 10 rows and detected columns are visible. | [03_User_Journey.md](03_User_Journey.md) | TBD | UI regression |
 | Analysis results UI | P0 | Done | MVP | Analysis endpoint | M | Frontend | Executive summary, counts, response data, and downloads are visible where supported. | [04_Wireframes.md](04_Wireframes.md) | TBD | Functional, regression |
-| PDF download visibility | P1 | Planned | MVP Polish | Report URL from backend | S | Frontend | User can access generated PDF from the results/report flow. | [14_Known_Issues.md](14_Known_Issues.md) | TBD | UI, download |
-| Responsive app shell | P1 | Planned | SaaS Foundation | Design system | L | Frontend | Left sidebar/top bar pattern works across desktop, tablet, and mobile. | [05_Design_System.md](05_Design_System.md) | TBD | Responsive, accessibility |
+| PDF download visibility | P1 | Done | Sprint 6 | Report URL from backend | S | Frontend | User can access generated PDF from the results/report flow. | [14_Known_Issues.md](14_Known_Issues.md) | TBD | UI, download |
+| Responsive app shell | P1 | Done | Sprint 6 | Design system | L | Frontend | Left sidebar/top bar pattern works across desktop, tablet, and mobile. | [05_Design_System.md](05_Design_System.md) | TBD | Responsive, accessibility |
+| Dataset Intelligence Upload Wizard | P1 | Done | Sprint 7 | App shell, upload/analyse APIs, backend column profiles | L | Frontend | Users can move through upload, dataset profile, column intelligence, analysis options, review, processing, and results without backend behaviour changes. | [03_User_Journey.md](03_User_Journey.md), [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, wizard regression, API compatibility, responsive checks |
 
 ## 7. Backend
 
@@ -211,7 +212,7 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 
 | Feature Name | Priority | Status | Sprint | Dependencies | Estimated Effort | Owner | Definition of Done | Related Documentation | Related GitHub Issue | Testing Required |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Analysis wizard | P1 | Planned | UX Foundation | Existing MVP flow | L | Frontend | Workflow is step-by-step from upload through results. | [03_User_Journey.md](03_User_Journey.md) | TBD | UI, regression |
+| Analysis wizard | P1 | Done | Sprint 7 | Existing MVP flow, dataset intelligence fields | L | Frontend | Workflow is step-by-step from upload through results and exposes dataset profiling, column intelligence, analysis options, review, processing, and results. | [03_User_Journey.md](03_User_Journey.md) | TBD | UI, regression |
 | Theme review | P2 | Planned | Insight Quality | Analysis output | L | Frontend/AI | Users can inspect themes in card-based review. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, AI review |
 | Sentiment review | P2 | Planned | Insight Quality | Analysis output | M | Frontend/AI | Users can inspect sentiment distribution and examples. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI |
 | Lightweight cross-analysis | P1 | Done | MVP Expansion | Segment and rating detection | M | Backend | Backend returns sentiment by segment, themes by segment, average ratings by segment, and notable difference highlights. | [08_AI_Architecture.md](08_AI_Architecture.md) | TBD | Functional, regression |
@@ -273,3 +274,4 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 |---|---|---|---|
 | 1.0 | 2026-07-05 | Codex | Created Version 1 engineering project tracker for SurveyIQ documentation library. |
 | 1.1 | 2026-07-05 | Codex | Added agreed Sprint 1-15 plan with completed sprint history and upcoming sprint delivery details. |
+| 1.2 | 2026-07-05 | Codex | Recorded Sprint 7 Dataset Intelligence Upload Wizard completion and updated tracker statuses. |

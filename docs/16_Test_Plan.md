@@ -186,6 +186,9 @@ UI tests should validate:
 - Mobile drawer opens and closes.
 - Top bar controls render without blocking core workflow.
 - Theme toggle changes shell theme state.
+- Dataset Intelligence Wizard renders all required steps.
+- Wizard progress clearly identifies the current step.
+- Column intelligence groups and controls render from backend `column_profiles`.
 - Upload controls.
 - Browse fallback for drag-and-drop.
 - Preview table readability.
@@ -298,6 +301,31 @@ Recommended automation roadmap:
 | Theme toggle | Toggle theme control. | Shell switches between light and dark presentation without losing page state. |
 | Shared state components | Trigger empty, loading, and error states. | Empty, loading, and error components are readable, accessible, and visually consistent. |
 | Existing workflow inside shell | Upload and analyse a sample file from inside the shell. | Upload, preview, analysis, counts, CSV download, and PDF download continue to work. |
+
+### Dataset Intelligence Upload Wizard
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Render wizard progress | Open the analysis page. | Upload, Dataset Profile, Column Selection, Analysis Options, Review, and Run Analysis steps are visible. |
+| Upload CSV through wizard | Upload valid CSV from the wizard dropzone or browse control. | Upload succeeds and wizard advances to Dataset Profile. |
+| Upload Excel through wizard | Upload valid `.xlsx` file. | Upload succeeds, preview/profile data is available, and no backend contract changes are required. |
+| Download sample dataset | Select Download sample dataset. | Sample CSV downloads from the frontend static asset. |
+| Review dataset profile | Upload mixed dataset. | Dataset name, rows, columns, detected types, missing values, duplicate-row availability, and statistics are visible. |
+| Review column intelligence | Continue to Column Selection. | Columns are grouped by qualitative, rating, numeric, categorical, date, identifier, and other categories. |
+| Preselect AI recommendations | Inspect selected columns after upload. | Recommended feedback, segment, rating, date, and identifier roles are preselected where backend profiles suggest them. |
+| Preselect qualitative feedback columns | Upload `surveyiq-sample-dataset.csv` or mixed survey dataset. | `main_feedback` and `improvement_feedback` appear under Qualitative Columns, are enabled, and the selected qualitative column count is 2. |
+| Fallback when profile metadata is incomplete | Simulate upload response without complete `column_profiles`. | UI infers likely qualitative, rating, numeric, categorical, date, identifier, and unknown groupings from column names and preview values without blocking analysis. |
+| Enable/disable column | Toggle a column checkbox. | Column enabled state updates without requiring full manual classification. |
+| Rename role | Change a column role selector. | Role updates and selected qualitative/segment/rating summaries reflect the change. |
+| Ignore column | Select Ignore for a column. | Column is disabled and role changes to ignore. |
+| Configure analysis options | Toggle analysis options. | Option state updates and review summary reflects reports to generate. |
+| Review setup | Continue to Review. | Selected qualitative, segment, rating columns, report outputs, estimated responses, estimated OpenAI calls, and estimated time are visible. |
+| Start analysis | Start from Review with at least one qualitative column. | Wizard enters Processing and submits existing `feedback_columns` request to backend. |
+| Processing state | Run analysis. | UI states that live backend progress is unavailable and does not fake exact progress. |
+| Results redirect | Analysis completes. | User is shown the current Results view until Sprint 8 dashboard exists. |
+| CSV/PDF links | Complete analysis with export options enabled. | Analysed CSV and PDF report links are available. |
+| No qualitative column | Disable all feedback columns and try to continue/start. | Validation prevents analysis and explains that at least one qualitative feedback column is required. |
+| Structured API errors | Simulate upload or analysis errors using `{ detail: "message" }`, `{ detail: [{ msg: "...", loc: [...] }] }`, `{ error: { message: "..." } }`, and plain text payloads. | User sees readable, safe messages; `[object Object]`, stack traces, internal paths, and secrets are never displayed. |
 
 ### Upload Excel
 
@@ -487,6 +515,9 @@ Before a release:
 - Backend build or compile check passes.
 - Sprint 6 shell regression passes on desktop, tablet, and mobile viewports.
 - Sidebar collapse and mobile drawer navigation are verified.
+- Sprint 7 wizard regression passes across upload, profile, column intelligence, options, review, processing, and results.
+- Column intelligence exposes backend profiling fields without requiring backend behaviour changes.
+- Structured wizard API errors render as readable user-facing text and never as `[object Object]`.
 
 ## 16. Related Documents
 
@@ -505,3 +536,6 @@ Before a release:
 |---|---|---|---|
 | 1.0 | 2026-07-05 | Codex | Created Version 1 SurveyIQ testing strategy and feature-level test plan. |
 | 1.1 | 2026-07-05 | Codex | Added tests for column profiling, multi-column qualitative analysis, quantitative summaries, segment detection, and cross-analysis. |
+| 1.2 | 2026-07-05 | Codex | Added Sprint 7 Dataset Intelligence Upload Wizard test cases and release readiness checks. |
+| 1.3 | 2026-07-05 | Codex | Added regression tests for qualitative column preselection and incomplete profile fallback mapping. |
+| 1.4 | 2026-07-05 | Codex | Added regression tests for readable structured API error handling in the Dataset Intelligence Wizard. |

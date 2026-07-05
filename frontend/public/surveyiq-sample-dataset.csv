@@ -1,0 +1,6 @@
+respondent_id,submitted_date,department,region,role,product,satisfaction_rating,ease_of_use_rating,nps_score,main_feedback,improvement_feedback
+1,2026-06-01,Support,North,Manager,Portal,8,7,8,"The new portal is easier to navigate and the dashboard saves time.","More guidance is needed for first-time users."
+2,2026-06-02,Sales,South,Individual Contributor,Mobile App,5,4,3,"The app has useful information but it feels slow during peak hours.","Improve performance and simplify the login flow."
+3,2026-06-03,Operations,West,Director,Reporting,9,8,9,"The reporting export is clear and leadership likes the summaries.","Add more filtering by region and service category."
+4,2026-06-04,Product,East,Analyst,Portal,6,6,5,"The experience is acceptable but some labels are confusing.","Clarify terminology and make help content easier to find."
+5,2026-06-05,Support,North,Individual Contributor,Mobile App,3,3,2,"Customers are frustrated when sync fails and support tickets increase.","Prioritize sync reliability and clearer error messages."

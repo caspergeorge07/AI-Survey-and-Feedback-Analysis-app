@@ -115,38 +115,24 @@ This sprint plan is the agreed delivery sequence from the completed local MVP wo
 | Sprint 3 | OpenAI analysis and CSV export | Completed |
 | Sprint 4 | Multi-stage AI analysis pipeline | Completed |
 | Sprint 5 | Dataset-level feedback intelligence, including column profiling, multiple qualitative columns, quantitative summaries, segment detection, cross-analysis, enhanced executive summary, PDF report updates, and mixed survey test dataset | Completed |
+| Sprint 6 | Frontend foundation and application shell | Completed |
+| Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profile, column intelligence, analysis options, review, processing, and results | Completed |
 
 ### Upcoming Sprints
 
-#### Sprint 6: Frontend Foundation and Application Shell
-
-**Objective:** Establish the production-quality authenticated-app layout foundation without adding authentication yet.  
-**Key Deliverables:** App shell, left sidebar navigation, top bar, responsive layout foundations, shared page header pattern, loading/error/success state patterns, design-token alignment.  
-**Dependencies:** Approved wireframes, design system, current MVP frontend, existing backend API compatibility.  
-**Definition of Done:** The frontend uses the SurveyIQ app shell pattern and can host existing MVP workflow screens without breaking upload, preview, analysis, CSV download, or PDF report access.  
-**Testing Required:** Frontend build, responsive smoke testing, keyboard navigation check, existing MVP flow regression.
-
-#### Sprint 7: Executive Dashboard
+#### Sprint 8: Executive Dashboard
 
 **Objective:** Create the first insight-led dashboard experience for returning users and an action-first empty dashboard for new users.  
 **Key Deliverables:** Empty dashboard, returning-user dashboard layout, summary metric cards, recent analysis/report placeholders, top themes and sentiment summary surfaces.  
-**Dependencies:** Sprint 6 app shell, existing analysis response fields, dashboard wireframes.  
+**Dependencies:** Sprint 6 app shell, Sprint 7 wizard, existing analysis response fields, dashboard wireframes.  
 **Definition of Done:** Users can land on a dashboard that either guides first analysis or summarizes available analysis/report outputs using current MVP data where available.  
 **Testing Required:** UI regression, empty-state testing, populated-state testing, responsive layout check, accessibility check for summary cards.
-
-#### Sprint 8: Projects and Analysis Wizard
-
-**Objective:** Organize the existing analysis workflow into a guided project-oriented wizard without adding database persistence yet.  
-**Key Deliverables:** Project-style workflow scaffolding, New Analysis page, Upload Data step, Data Preview step, Configure Analysis step, Processing state, Results transition.  
-**Dependencies:** Sprint 6 app shell, current upload/analyse endpoints, user journey, wireframes.  
-**Definition of Done:** Users can complete the existing upload-to-results flow through a clear wizard while the old backend contract remains supported.  
-**Testing Required:** End-to-end upload/preview/configure/analyse regression, validation-state testing, back/continue navigation testing, error-state testing.
 
 #### Sprint 9: Results Dashboard and Interactive Charts
 
 **Objective:** Improve the analysis results experience with dashboard-style presentation and interactive chart affordances.  
 **Key Deliverables:** Executive summary-first results layout, theme count chart, sentiment chart, quantitative summary panels, segment/cross-analysis panels, response table improvements.  
-**Dependencies:** Sprint 8 wizard, dataset-level response fields from Sprint 5, design system chart standards.  
+**Dependencies:** Sprint 7 wizard, dataset-level response fields from Sprint 5, design system chart standards.  
 **Definition of Done:** Existing analysis results are presented in a management-ready dashboard while preserving analysed CSV and PDF download paths.  
 **Testing Required:** Results rendering tests, chart accessibility checks, CSV/PDF download regression, single-column and multi-column analysis response compatibility tests.
 
@@ -422,3 +408,4 @@ This sprint plan is the agreed delivery sequence from the completed local MVP wo
 | 0.1 | TBD | TBD | Initial starter document. |
 | 0.2 | 2026-07-05 | Codex | Expanded into phase-based engineering roadmap with objectives, deliverables, dependencies, effort, duration, and definitions of done. |
 | 0.3 | 2026-07-05 | Codex | Added agreed Sprint 1-15 plan with completed sprint history and detailed upcoming sprint definitions. |
+| 0.4 | 2026-07-05 | Codex | Recorded Sprint 7 Dataset Intelligence Upload Wizard completion and updated Sprint 8 dashboard sequencing. |

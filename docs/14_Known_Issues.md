@@ -197,7 +197,25 @@ Status definitions:
 
 ## 4. Resolved Issues
 
-No resolved issues are recorded in the Version 1 issue register yet.
+### Issue ID: KI-013
+
+**Priority:** P1  
+**Description:** Dataset Intelligence Wizard could show zero selected qualitative columns after upload.  
+**Previous Behaviour:** The frontend depended on one exact `column_profiles` response shape. If profile metadata was missing, incomplete, stale, or returned under alternate field names, recommended feedback columns such as `main_feedback` and `improvement_feedback` could fail to preselect.  
+**Expected Behaviour:** Qualitative text columns and suggested role `feedback_column` should be shown under Qualitative Columns and preselected for analysis.  
+**Resolution:** Frontend upload response mapping now normalizes profile metadata, supports singular/plural feedback column hints, treats `feedback_column` and `qualitative_text` as recommended feedback selections, and falls back to column-name/preview-value inference when profile metadata is incomplete.  
+**Status:** Resolved  
+**Related Component:** Dataset Intelligence Wizard, column profiling, frontend upload flow
+
+### Issue ID: KI-014
+
+**Priority:** P1  
+**Description:** Dataset Intelligence Wizard rendered structured API errors as `[object Object]`.  
+**Previous Behaviour:** The frontend converted non-string API `detail` payloads directly to strings. FastAPI validation arrays, nested provider errors, or object-shaped error responses could appear to users as `[object Object]`, especially during the Analysis Options and Review flow.  
+**Expected Behaviour:** All upload and analysis errors should be readable, actionable, and safe for users, including `{ detail: "message" }`, `{ detail: [{ msg: "...", loc: [...] }] }`, `{ error: { message: "..." } }`, and plain text responses.  
+**Resolution:** The wizard now normalizes API errors through a safe user-facing formatter, extracts useful messages from known FastAPI/provider shapes, redacts internal or sensitive details, and logs unreadable payload shapes only in development.  
+**Status:** Resolved  
+**Related Component:** Dataset Intelligence Wizard, API error handling, frontend validation
 
 ## 5. Related Documents
 
@@ -215,3 +233,5 @@ No resolved issues are recorded in the Version 1 issue register yet.
 | 0.1 | TBD | TBD | Initial known issues starter document. |
 | 1.0 | 2026-07-05 | Codex | Migrated and expanded known issues into Version 1 operational issue register. |
 | 1.1 | 2026-07-05 | Codex | Added known issues for lightweight cross-analysis and heuristic column role detection. |
+| 1.2 | 2026-07-05 | Codex | Added resolved issue for Sprint 7 Dataset Intelligence Wizard qualitative column preselection bug. |
+| 1.3 | 2026-07-05 | Codex | Added resolved issue for Sprint 7 structured API error rendering bug. |

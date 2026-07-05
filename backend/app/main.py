@@ -80,8 +80,24 @@ class UploadResponse(BaseModel):
 
 class AnalyseRequest(BaseModel):
     upload_id: str
-    feedback_column: str | None = None
-    feedback_columns: list[str] | None = None
+    feedback_column: str | None = Field(
+        default=None,
+        description="Legacy single feedback column selector.",
+    )
+    feedback_columns: list[str] | None = Field(
+        default=None,
+        description="One or more feedback columns to analyse.",
+    )
+
+    def normalized_feedback_columns(self) -> list[str]:
+        requested_columns = self.feedback_columns or (
+            [self.feedback_column] if self.feedback_column else []
+        )
+        selected: list[str] = []
+        for column in requested_columns:
+            if column and column not in selected:
+                selected.append(column)
+        return selected
 
 
 @app.get("/health")
@@ -210,17 +226,12 @@ def download_management_report(analysis_id: str) -> FileResponse:
 
 
 def _selected_feedback_columns(request: AnalyseRequest, df: pd.DataFrame) -> list[str]:
-    requested_columns = request.feedback_columns or (
-        [request.feedback_column] if request.feedback_column else []
-    )
+    requested_columns = request.normalized_feedback_columns()
     selected: list[str] = []
     for column in requested_columns:
-        if not column:
-            continue
         if column not in df.columns:
             raise HTTPException(status_code=400, detail=f"Selected feedback column was not found: {column}")
-        if column not in selected:
-            selected.append(column)
+        selected.append(column)
 
     if not selected:
         raise HTTPException(status_code=400, detail="Select at least one feedback column before analysing feedback.")
