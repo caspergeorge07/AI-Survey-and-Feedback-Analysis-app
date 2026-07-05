@@ -197,6 +197,8 @@ UI tests should validate:
 - Results sections.
 - Theme and sentiment charts.
 - Download actions.
+- Reports Library search, filters, sorting, cards, empty state, and report viewer.
+- Report records appearing in Reports Library, Project Detail, and Dashboard Recent Reports after completed analysis.
 - Responsive behaviour.
 - Error and empty states.
 
@@ -431,6 +433,24 @@ Recommended automation roadmap:
 | Missing PDF | Request unavailable PDF. | User receives safe not-found error. |
 | Dataset sections | Generate PDF from mixed dataset. | PDF includes dataset overview, column profile summary, quantitative summary, segment insights, and cross-analysis highlights when relevant. |
 
+### Reports Library and Report Viewer
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Reports library empty state | Open Reports before generating a report. | Empty state explains that reports appear after analysis and provides Start new analysis and sample dataset actions. |
+| Create report record | Complete an analysis that returns a PDF report URL. | A local report record is created without changing backend API contracts. |
+| Reports library listing | Open Reports after completed analysis. | Generated report appears with title, project name when assigned, source analysis, status, report type, response count, top themes, sentiment summary, and download actions. |
+| Search reports | Search by report title, project, source analysis, or theme. | Matching reports remain visible and non-matching reports are hidden. |
+| Filter reports by project | Apply All projects, No project, and specific project filters. | Reports are filtered according to project assignment. |
+| Filter reports by status | Apply status filter. | Ready reports display correctly and no unsafe state appears for unsupported statuses. |
+| Sort reports | Sort by newest, oldest, project, and report type. | Report order changes according to selected sort option. |
+| Open report viewer | Select View report from a report card. | Report detail opens with executive summary, theme summary, sentiment summary, recommended actions, dataset overview, and back navigation. |
+| Download from report viewer | Select Download PDF and Download CSV in the viewer. | Existing backend download URLs are used and no new backend contract is required. |
+| Dashboard recent reports | Complete an analysis and inspect Dashboard Recent Reports. | The generated report appears in dashboard recent reports from local report state. |
+| Project report integration | Select a project, complete analysis, and open Project Detail Reports tab. | Generated report appears under the selected project with PDF and CSV links where available. |
+| Local report persistence | Refresh browser after generating a report. | Report record remains available through browser localStorage. |
+| Responsive reports layout | Check desktop, tablet, and mobile widths. | Report filters, cards, viewer, and empty state remain usable without horizontal page overflow. |
+
 ### Dashboard
 
 | Test Case | Steps | Expected Result |
@@ -538,6 +558,7 @@ Before a release:
 - Sprint 8 dashboard regression passes for KPI cards, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, quick actions, and responsive layout.
 - Sprint 9 live dashboard regression passes for latest-analysis KPIs, top themes, sentiment, recommended actions, recent analysis, recent reports, activity, CSV/PDF quick links, and empty session state.
 - Sprint 10 project workspace regression passes for project creation, search, filters, sorting, detail tabs, project assignment, localStorage persistence, and project-linked analysis/report records.
+- Sprint 11 reports regression passes for report record creation, Reports Library search/filter/sort, report viewer, dashboard recent reports, project detail reports, CSV/PDF downloads, localStorage persistence, and responsive layout.
 - Sprint 7 wizard regression passes across upload, profile, column intelligence, options, review, processing, and results.
 - Column intelligence exposes backend profiling fields without requiring backend behaviour changes.
 - Structured wizard API errors render as readable user-facing text and never as `[object Object]`.
@@ -565,3 +586,4 @@ Before a release:
 | 1.5 | 2026-07-05 | Codex | Added Sprint 8 Executive Dashboard test cases and release readiness checks. |
 | 1.6 | 2026-07-05 | Codex | Added Sprint 9 live dashboard integration test cases and session-local state coverage. |
 | 1.7 | 2026-07-05 | Codex | Added Sprint 10 project workspace, local persistence, and project assignment test cases. |
+| 1.8 | 2026-07-05 | Codex | Added Sprint 11 Reports Library, Report Viewer, report record integration, and local report persistence test cases. |

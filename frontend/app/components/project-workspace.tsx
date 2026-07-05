@@ -399,21 +399,40 @@ function ProjectReports({ apiBaseUrl, project }: { apiBaseUrl: string; project: 
           <div>
             <strong>{report.title}</strong>
             <span>{report.executiveSummary}</span>
-            <small>Created {formatDate(report.createdAt)}</small>
+            <small>
+              Created {formatDate(report.createdAt)} / {formatNumber(report.responseCount)} responses
+            </small>
           </div>
-          <a
-            className="download-link subtle"
-            href={`${apiBaseUrl}${report.downloadUrl}`}
-            onClick={() =>
-              addProjectActivity(project.id, {
-                type: "pdf_downloaded",
-                label: "PDF downloaded",
-                detail: `${report.title} was downloaded.`,
-              })
-            }
-          >
-            Download
-          </a>
+          <div className="download-actions">
+            <a
+              className="download-link subtle"
+              href={`${apiBaseUrl}${report.downloadUrl}`}
+              onClick={() =>
+                addProjectActivity(project.id, {
+                  type: "pdf_downloaded",
+                  label: "PDF downloaded",
+                  detail: `${report.title} was downloaded.`,
+                })
+              }
+            >
+              Download PDF
+            </a>
+            {report.csvDownloadUrl ? (
+              <a
+                className="download-link subtle"
+                href={`${apiBaseUrl}${report.csvDownloadUrl}`}
+                onClick={() =>
+                  addProjectActivity(project.id, {
+                    type: "csv_exported",
+                    label: "CSV exported",
+                    detail: `${report.title} CSV was downloaded.`,
+                  })
+                }
+              >
+                Download CSV
+              </a>
+            ) : null}
+          </div>
         </article>
       ))}
     </div>

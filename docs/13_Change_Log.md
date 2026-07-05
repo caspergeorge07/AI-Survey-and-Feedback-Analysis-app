@@ -39,6 +39,12 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Added
 
+- Sprint 11 Reports Library and Report Viewer.
+- Local report records stored in the existing browser workspace state when completed analyses return report URLs.
+- Reports Library with search, project filter, status filter, sorting by newest/oldest/project/report type, report cards, and responsive empty states.
+- Report detail viewer with executive summary, theme summary, sentiment summary, recommended actions, dataset overview, and PDF/CSV download actions.
+- Dashboard Recent Reports integration backed by generated local report records.
+- Project Detail Reports tab integration for reports generated while a project is selected.
 - Sprint 10 Project and Workspace Management.
 - LocalStorage-backed workspace state for projects, selected project assignment, latest analysis metadata, project analyses, project reports, and activity.
 - Projects page with project cards, search, category/status filters, sorting, empty state, and workspace/project statistics.
@@ -83,6 +89,8 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Changed
 
+- Reports are now first-class local workspace records in the frontend while preserving existing backend CSV/PDF download endpoints and API response contracts.
+- Dashboard Recent Reports now prefers stored generated report records and falls back safely to latest analysis export links.
 - Extended the previous latest-analysis state into local workspace state while preserving the existing upload, analyse, CSV, and PDF backend contracts.
 - Project-linked analyses now populate local project overview statistics, analysis rows, report rows, and activity timeline entries.
 - Replaced Executive Dashboard mock/demo data with live output from the most recent completed analysis in the current frontend session.
@@ -134,16 +142,16 @@ The changelog is written for internal product and engineering history. Customer-
 | Sprint 8 | Executive Dashboard with KPI cards, recent analyses, reports, top themes, sentiment, recommended actions, activity, and quick actions | Completed |
 | Sprint 9 | Live Executive Dashboard Integration replacing mock dashboard data with latest completed analysis output | Completed |
 | Sprint 10 | Project and Workspace Management with local project persistence, project cards, create modal, project detail tabs, project assignment, and project-linked analyses/reports | Completed |
+| Sprint 11 | Reports Library and Report Viewer with local report records, search, filters, sorting, report detail view, dashboard integration, and project report integration | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 11: AI Assistant interface | Add contextual assistant drawer. | Drawer UI, prompt input, suggestions, context display, states. | Sprint 6, Sprint 9 context. | Assistant drawer works without disrupting core workflow. | Drawer, focus, keyboard, and context-boundary tests. |
-| Sprint 12: Authentication and user accounts | Add SaaS account access. | Signup, login, forgot password, sessions, protected routes. | Auth decision, security standards. | Users can create accounts and access protected pages. | Auth, protected route, and security tests. |
-| Sprint 13: Database and persistent projects | Persist product work. | Schema, migrations, projects, analyses, reports. | Sprint 12, database decision. | Users can reopen saved work across sessions. | Migration, CRUD, persistence, authorization tests. |
-| Sprint 14: Team workspaces and permissions | Add collaboration foundation. | Workspaces, members, invites, basic roles, permissions. | Sprint 12, Sprint 13. | Workspace access and basic permissions are enforced. | Invite, role, isolation, access-denied tests. |
-| Sprint 15: Billing, subscriptions, and private beta preparation | Prepare commercial beta foundation. | Billing page, subscriptions, plan/usage display, payment integration, beta checklist. | Sprint 12, Sprint 13, Sprint 14, pricing decisions. | Private beta can operate with accounts, persistence, workspaces, and billing foundation. | Billing sandbox, subscription, usage-limit, beta smoke tests. |
+| Sprint 12: AI Assistant interface | Add contextual assistant drawer. | Drawer UI, prompt input, suggestions, context display, states. | Sprint 6, Sprint 9 context, Sprint 11 report context. | Assistant drawer works without disrupting core workflow. | Drawer, focus, keyboard, and context-boundary tests. |
+| Sprint 13: Authentication and user accounts | Add SaaS account access. | Signup, login, forgot password, sessions, protected routes. | Auth decision, security standards. | Users can create accounts and access protected pages. | Auth, protected route, and security tests. |
+| Sprint 14: Database and persistent projects | Persist product work. | Schema, migrations, projects, analyses, reports. | Sprint 13, database decision. | Users can reopen saved work across sessions. | Migration, CRUD, persistence, authorization tests. |
+| Sprint 15: Team workspaces and permissions | Add collaboration foundation. | Workspaces, members, invites, basic roles, permissions. | Sprint 13, Sprint 14. | Workspace access and basic permissions are enforced. | Invite, role, isolation, access-denied tests. |
 
 ### Changed
 
@@ -363,3 +371,4 @@ The changelog is written for internal product and engineering history. Customer-
 | 1.6 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and dashboard regression coverage. |
 | 1.7 | 2026-07-05 | Codex | Recorded Sprint 9 Live Executive Dashboard Integration and latest-analysis state coverage. |
 | 1.8 | 2026-07-05 | Codex | Recorded Sprint 10 Project and Workspace Management completion and localStorage workspace scope. |
+| 1.9 | 2026-07-05 | Codex | Recorded Sprint 11 Reports Library and Report Viewer with local report records and report surface integrations. |

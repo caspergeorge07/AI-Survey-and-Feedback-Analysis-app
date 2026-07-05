@@ -5,6 +5,7 @@ import { AnalysisStateProvider } from "./components/analysis-state";
 import { DatasetIntelligenceWizard } from "./components/dataset-wizard";
 import { ExecutiveDashboard } from "./components/executive-dashboard";
 import { ProjectWorkspace } from "./components/project-workspace";
+import { ReportsLibrary } from "./components/reports-library";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -36,6 +37,13 @@ export default function Home() {
             title="Projects"
           />
           <ProjectWorkspace apiBaseUrl={API_BASE_URL} />
+
+          <PageHeader
+            description="Search, filter, open, and download generated management reports from the local SurveyIQ workspace."
+            eyebrow="Reports"
+            title="Reports Library"
+          />
+          <ReportsLibrary apiBaseUrl={API_BASE_URL} />
 
           <PageHeader
             description="Upload CSV or Excel survey data, review SurveyIQ's column intelligence, configure analysis outputs, and generate executive-ready results."

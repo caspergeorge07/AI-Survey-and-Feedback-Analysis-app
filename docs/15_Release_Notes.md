@@ -29,6 +29,7 @@ For internal engineering history, use [13_Change_Log.md](13_Change_Log.md).
 | Version | Release Name | Status | Summary |
 |---|---|---|---|
 | 1.0 | Documentation Library Version 1 | Draft | Complete professional documentation set for product, engineering, AI, API, brand, testing, and operations. |
+| 0.10 | Reports Library and Report Viewer | Draft | Added local report records, searchable Reports Library, report viewer, and dashboard/project report integrations. |
 | 0.9 | Project and Workspace Management | Draft | Added local project management, project detail tabs, project assignment, and project-linked analysis/report records. |
 | 0.8 | Live Executive Dashboard Integration | Draft | Replaced dashboard demo data with the latest completed analysis output for the current local session. |
 | 0.7 | Executive Dashboard | Draft | Added the primary dashboard landing experience with KPIs, recent work, themes, sentiment, actions, activity, and quick actions. |
@@ -79,6 +80,19 @@ SurveyIQ now includes local project management for organising analysis work befo
 - See completed analyses, generated PDF reports, export links, and activity captured under the selected project.
 
 Project data is stored in browser localStorage for MVP validation and is not yet shared across users, browsers, or devices.
+
+### Reports Library and Report Viewer
+
+Generated management reports are now treated as first-class local records in SurveyIQ. After an analysis generates a PDF report, SurveyIQ stores a report record in the local workspace so users can:
+
+- Search generated reports.
+- Filter reports by project or status.
+- Sort reports by newest, oldest, project, or report type.
+- Open a report detail viewer.
+- Review executive summary, themes, sentiment, recommended actions, and dataset overview.
+- Download the report PDF and analysed CSV where available.
+
+Reports generated for a selected project also appear in that project's Reports tab, and recent generated reports appear on the Executive Dashboard.
 
 ### Dataset Intelligence Upload Wizard
 
@@ -188,6 +202,8 @@ SurveyIQ can generate a management-ready PDF report with:
 - Replaced executive dashboard demo data with latest-analysis output from the current frontend session.
 - Added live dashboard empty states for sessions where no analysis has been completed yet.
 - Added project management with localStorage-backed workspace state, project assignment, project detail tabs, and project-linked analyses/reports.
+- Added local report records so generated PDF/CSV outputs can be revisited from the Reports Library, Project Detail, and Executive Dashboard.
+- Added searchable, filterable, sortable report cards and a report viewer while preserving the existing PDF and CSV download endpoints.
 - Added responsive dashboard layouts for desktop, tablet, and mobile.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
@@ -213,12 +229,14 @@ Current MVP limitations:
 - Local file storage only.
 - No authentication.
 - No backend database-backed project library; projects are stored in browser localStorage for the local MVP.
-- Browser-local project and latest-analysis state can be cleared by browser settings and is not available across devices.
+- No backend database-backed reports library; generated report records are stored in browser localStorage for the local MVP.
+- Browser-local project, report, and latest-analysis state can be cleared by browser settings and is not available across devices.
 - No billing or subscription management.
 - No team collaboration.
 - No enterprise governance.
 - Larger analyses can still take several minutes.
 - Full SaaS report library, AI Assistant, Settings, and other application pages are not yet fully built.
+- Report records are local metadata around existing generated files; durable multi-user report persistence is planned for the database phase.
 - Analysis option toggles are frontend workflow controls in the local MVP; the backend still generates the currently supported analysis outputs.
 - AI results should be reviewed for important business decisions, especially low-confidence responses.
 - Cross-analysis is intentionally lightweight in the MVP and should be treated as directional.
@@ -231,14 +249,13 @@ See [14_Known_Issues.md](14_Known_Issues.md) for the full known issues register.
 Planned or future capabilities:
 
 - Project organization.
-- Reports library.
+- AI Assistant as a right-side contextual drawer.
 - Authentication and onboarding.
 - Workspace settings.
 - Usage tracking.
 - Backend-connected dashboard summaries.
 - Theme review and sentiment review.
 - Richer frontend exposure of column profiles, quantitative summaries, and cross-analysis.
-- AI Assistant as a right-side contextual drawer.
 - Database-backed persistence.
 - Future enterprise capabilities such as SSO, custom taxonomy, data governance, benchmarking, and advanced permissions.
 
@@ -264,3 +281,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 | 1.4 | 2026-07-05 | Codex | Added Sprint 8 release notes for the Executive Dashboard landing experience. |
 | 1.5 | 2026-07-05 | Codex | Added Sprint 9 release notes for live dashboard integration with latest completed analysis output. |
 | 1.6 | 2026-07-05 | Codex | Added Sprint 10 release notes for Project and Workspace Management. |
+| 1.7 | 2026-07-05 | Codex | Added Sprint 11 release notes for Reports Library, Report Viewer, and local report record integrations. |

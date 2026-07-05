@@ -1,6 +1,6 @@
 "use client";
 
-import { LatestAnalysis, useAnalysisState } from "./analysis-state";
+import { LatestAnalysis, ReportRecord, useAnalysisState } from "./analysis-state";
 import { SectionHeader } from "./shell";
 import { Badge, Card, EmptyState } from "./ui";
 
@@ -78,8 +78,8 @@ const emptyDashboard: DashboardData = {
 };
 
 export function ExecutiveDashboard({ apiBaseUrl }: { apiBaseUrl: string }) {
-  const { latestAnalysis } = useAnalysisState();
-  const dashboard = latestAnalysis ? buildDashboardData(latestAnalysis, apiBaseUrl) : emptyDashboard;
+  const { latestAnalysis, reports } = useAnalysisState();
+  const dashboard = latestAnalysis ? buildDashboardData(latestAnalysis, apiBaseUrl, reports) : emptyDashboard;
   const maxThemeValue = Math.max(...dashboard.topThemes.map((theme) => theme.value), 1);
 
   return (
@@ -240,7 +240,7 @@ export function ExecutiveDashboard({ apiBaseUrl }: { apiBaseUrl: string }) {
         </Card>
       </section>
 
-      <section className="dashboard-grid dashboard-grid-secondary" id="reports">
+      <section className="dashboard-grid dashboard-grid-secondary" id="dashboard-reports">
         <Card className="dashboard-panel">
           <SectionHeader title="Recent Reports" detail="Generated outputs from the latest analysis" />
           {dashboard.recentReports.length ? (
@@ -293,7 +293,7 @@ export function ExecutiveDashboard({ apiBaseUrl }: { apiBaseUrl: string }) {
   );
 }
 
-function buildDashboardData(latest: LatestAnalysis, apiBaseUrl: string): DashboardData {
+function buildDashboardData(latest: LatestAnalysis, apiBaseUrl: string, reports: ReportRecord[]): DashboardData {
   const { analysis } = latest;
   const sentimentCounts = normalizeSentimentCounts(analysis.overall.counts_by_sentiment);
   const sentimentTotal = Object.values(sentimentCounts).reduce((total, count) => total + count, 0);
@@ -360,7 +360,7 @@ function buildDashboardData(latest: LatestAnalysis, apiBaseUrl: string): Dashboa
         date: completedLabel,
       },
     ],
-    recentReports: buildReports(analysis, apiBaseUrl, topThemes.length, analysis.results.length),
+    recentReports: buildReports(analysis, apiBaseUrl, topThemes.length, analysis.results.length, reports),
     topThemes,
     sentiment,
     recommendedActions,
@@ -369,7 +369,21 @@ function buildDashboardData(latest: LatestAnalysis, apiBaseUrl: string): Dashboa
   };
 }
 
-function buildReports(analysis: LatestAnalysis["analysis"], apiBaseUrl: string, themeCount: number, responseCount: number) {
+function buildReports(
+  analysis: LatestAnalysis["analysis"],
+  apiBaseUrl: string,
+  themeCount: number,
+  responseCount: number,
+  savedReports: ReportRecord[],
+) {
+  if (savedReports.length) {
+    return savedReports.slice(0, 3).map((report) => ({
+      title: report.title,
+      detail: `${formatNumber(report.topThemes.length)} themes and ${formatNumber(report.responseCount)} analysed responses`,
+      status: report.status,
+      url: "#reports",
+    }));
+  }
   const reports: RecentReport[] = [];
   if (analysis.report_download_url) {
     reports.push({

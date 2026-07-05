@@ -71,6 +71,33 @@ export type ProjectActivity = {
   createdAt: string;
 };
 
+export type ReportStatus = "Ready";
+export type ReportType = "Management PDF";
+
+export type ReportRecord = {
+  id: string;
+  title: string;
+  projectId?: string | null;
+  projectName?: string | null;
+  sourceAnalysisId: string;
+  sourceAnalysisName: string;
+  createdAt: string;
+  reportType: ReportType;
+  status: ReportStatus;
+  pdfDownloadUrl: string;
+  csvDownloadUrl?: string | null;
+  responseCount: number;
+  topThemes: Array<{ label: string; value: number }>;
+  sentimentSummary: Record<string, number>;
+  executiveSummary: string;
+  recommendedActions: string[];
+  datasetOverview?: {
+    filename: string;
+    rowCount: number;
+    selectedFeedbackColumns: string[];
+  };
+};
+
 export type ProjectAnalysisRecord = {
   id: string;
   title: string;
@@ -90,6 +117,10 @@ export type ProjectReportRecord = {
   executiveSummary: string;
   createdAt: string;
   downloadUrl: string;
+  csvDownloadUrl?: string | null;
+  responseCount: number;
+  topThemes: Array<{ label: string; value: number }>;
+  sentimentSummary: Record<string, number>;
 };
 
 export type Project = {
@@ -112,6 +143,7 @@ export type CreateProjectInput = Pick<Project, "name" | "description" | "categor
 export type UpdateProjectInput = Partial<CreateProjectInput>;
 
 type PersistedWorkspaceState = {
+  reports: ReportRecord[];
   projects: Project[];
   selectedProjectId: string | null;
   latestAnalysis: LatestAnalysis | null;
@@ -132,6 +164,7 @@ type AnalysisStateContextValue = PersistedWorkspaceState & {
 const AnalysisStateContext = createContext<AnalysisStateContextValue | null>(null);
 
 export function AnalysisStateProvider({ children }: { children: ReactNode }) {
+  const [reports, setReports] = useState<ReportRecord[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectIdState] = useState<string | null>(null);
   const [latestAnalysis, setLatestAnalysis] = useState<LatestAnalysis | null>(null);
@@ -142,6 +175,7 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
       const stored = window.localStorage.getItem(storageKey);
       if (stored) {
         const parsed = JSON.parse(stored) as PersistedWorkspaceState;
+        setReports(Array.isArray(parsed.reports) ? parsed.reports : []);
         setProjects(Array.isArray(parsed.projects) ? parsed.projects : []);
         setSelectedProjectIdState(parsed.selectedProjectId ?? null);
         setLatestAnalysis(parsed.latestAnalysis ?? null);
@@ -158,11 +192,11 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      window.localStorage.setItem(storageKey, JSON.stringify({ projects, selectedProjectId, latestAnalysis }));
+      window.localStorage.setItem(storageKey, JSON.stringify({ reports, projects, selectedProjectId, latestAnalysis }));
     } catch (error) {
       console.warn("SurveyIQ could not save local workspace state.", safeError(error));
     }
-  }, [isHydrated, latestAnalysis, projects, selectedProjectId]);
+  }, [isHydrated, latestAnalysis, projects, reports, selectedProjectId]);
 
   function createProject(input: CreateProjectInput) {
     const now = new Date().toISOString();
@@ -191,6 +225,13 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
 
   function updateProject(projectId: string, input: UpdateProjectInput) {
     const now = new Date().toISOString();
+    if (input.name) {
+      setReports((current) =>
+        current.map((report) =>
+          report.projectId === projectId ? { ...report, projectName: input.name ?? report.projectName } : report,
+        ),
+      );
+    }
     setProjects((current) =>
       current.map((project) =>
         project.id === projectId
@@ -232,6 +273,11 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
 
   function deleteProject(projectId: string) {
     setProjects((current) => current.filter((project) => project.id !== projectId));
+    setReports((current) =>
+      current.map((report) =>
+        report.projectId === projectId ? { ...report, projectId: null, projectName: null } : report,
+      ),
+    );
     if (selectedProjectId === projectId) {
       setSelectedProjectIdState(null);
     }
@@ -274,8 +320,16 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
 
   function recordCompletedAnalysis(analysis: LatestAnalysis) {
     const projectId = selectedProjectId;
+    const project = projects.find((item) => item.id === projectId) ?? null;
     const nextAnalysis = { ...analysis, projectId };
     setLatestAnalysis(nextAnalysis);
+    const reportRecord = analysis.analysis.report_download_url
+      ? buildReportRecord(nextAnalysis, project?.name ?? null)
+      : null;
+
+    if (reportRecord) {
+      setReports((current) => [reportRecord, ...current.filter((report) => report.id !== reportRecord.id)]);
+    }
 
     if (!projectId) {
       return;
@@ -288,8 +342,8 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
           return project;
         }
         const analysisRecord = buildProjectAnalysisRecord(nextAnalysis);
-        const reports = analysis.analysis.report_download_url
-          ? [buildProjectReportRecord(nextAnalysis), ...project.reports]
+        const reports = reportRecord
+          ? [buildProjectReportRecord(reportRecord), ...project.reports.filter((report) => report.id !== reportRecord.id)]
           : project.reports;
         const reportActivity = analysis.analysis.report_download_url
           ? [createActivity("report_generated", "Report generated", "Management PDF report is ready.", now)]
@@ -326,6 +380,7 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      reports,
       projects,
       selectedProjectId,
       latestAnalysis,
@@ -339,7 +394,7 @@ export function AnalysisStateProvider({ children }: { children: ReactNode }) {
       recordCompletedAnalysis,
       addProjectActivity,
     }),
-    [latestAnalysis, projects, selectedProjectId],
+    [latestAnalysis, projects, reports, selectedProjectId],
   );
 
   return <AnalysisStateContext.Provider value={value}>{children}</AnalysisStateContext.Provider>;
@@ -368,13 +423,49 @@ function buildProjectAnalysisRecord(latest: LatestAnalysis): ProjectAnalysisReco
   };
 }
 
-function buildProjectReportRecord(latest: LatestAnalysis): ProjectReportRecord {
+function buildReportRecord(latest: LatestAnalysis, projectName: string | null): ReportRecord {
+  const topThemes = Object.entries(latest.analysis.overall.counts_by_theme)
+    .sort(([, left], [, right]) => right - left)
+    .slice(0, 6)
+    .map(([label, value]) => ({ label, value }));
   return {
     id: `${latest.analysis.analysis_id}-report`,
     title: `${latest.filename} Management Report`,
-    executiveSummary: latest.analysis.enhanced_executive_summary || latest.analysis.overall.executive_summary,
+    projectId: latest.projectId ?? null,
+    projectName,
+    sourceAnalysisId: latest.analysis.analysis_id,
+    sourceAnalysisName: latest.filename,
     createdAt: latest.completedAt,
-    downloadUrl: latest.analysis.report_download_url ?? "",
+    reportType: "Management PDF",
+    status: "Ready",
+    pdfDownloadUrl: latest.analysis.report_download_url ?? "",
+    csvDownloadUrl: latest.analysis.download_url,
+    responseCount: latest.analysis.results.length,
+    topThemes,
+    sentimentSummary: latest.analysis.overall.counts_by_sentiment,
+    executiveSummary: latest.analysis.enhanced_executive_summary || latest.analysis.overall.executive_summary,
+    recommendedActions: (latest.analysis.overall.recommended_actions ?? []).filter(Boolean),
+    datasetOverview: {
+      filename: latest.filename,
+      rowCount: latest.rowCount,
+      selectedFeedbackColumns: latest.selectedFeedbackColumns.length
+        ? latest.selectedFeedbackColumns
+        : latest.analysis.selected_feedback_columns ?? [],
+    },
+  };
+}
+
+function buildProjectReportRecord(report: ReportRecord): ProjectReportRecord {
+  return {
+    id: report.id,
+    title: report.title,
+    executiveSummary: report.executiveSummary,
+    createdAt: report.createdAt,
+    downloadUrl: report.pdfDownloadUrl,
+    csvDownloadUrl: report.csvDownloadUrl,
+    responseCount: report.responseCount,
+    topThemes: report.topThemes,
+    sentimentSummary: report.sentimentSummary,
   };
 }
 
