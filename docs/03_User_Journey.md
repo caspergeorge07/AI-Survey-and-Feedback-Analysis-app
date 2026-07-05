@@ -539,4 +539,4 @@ Future enhancements should remain aligned with the SurveyIQ sitemap and avoid un
 - [05_Design_System.md](05_Design_System.md)
 - [06_Product_Roadmap.md](06_Product_Roadmap.md)
 - [08_AI_Architecture.md](08_AI_Architecture.md)
-- [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
+- [14_Known_Issues.md](14_Known_Issues.md)
