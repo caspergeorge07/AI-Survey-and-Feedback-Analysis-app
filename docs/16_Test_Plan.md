@@ -88,6 +88,7 @@ Required datasets:
 - File with unusual characters and encoding.
 - File with long comments.
 - File with mixed positive, neutral, and negative sentiment.
+- Mixed survey dataset with at least 100 rows, multiple qualitative feedback columns, numeric/rating columns, categorical segment columns, and a date column.
 
 Data safety:
 
@@ -109,6 +110,10 @@ Core functional areas:
 - Show response-level analysis.
 - Show theme counts.
 - Show sentiment counts.
+- Show or return column profiles.
+- Support old single `feedback_column` analysis.
+- Support new `feedback_columns` multi-column analysis.
+- Return quantitative summaries and cross-analysis when relevant.
 - Generate analysed CSV.
 - Generate PDF report.
 - Download outputs.
@@ -129,9 +134,10 @@ Baseline regression flow:
 8. Confirm AI response succeeds.
 9. Confirm theme counts.
 10. Confirm sentiment counts.
-11. Download analysed CSV.
-12. Generate or download PDF report.
-13. Confirm frontend displays analysis correctly.
+11. Confirm additive dataset fields do not break old frontend fields.
+12. Download analysed CSV.
+13. Generate or download PDF report.
+14. Confirm frontend displays analysis correctly.
 
 Regression tests should run before changes to establish baseline and after changes to confirm no breakage.
 
@@ -299,6 +305,16 @@ Recommended automation roadmap:
 | Select numeric column | Select numeric-only column if available. | User receives warning or analysis-safe validation. |
 | Select empty text column | Select empty column. | User receives no usable responses error. |
 
+### Column Profiling
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Profile all columns | Upload mixed 100-row dataset. | Response includes one profile per uploaded column. |
+| Detect qualitative columns | Inspect `main_feedback` and `improvement_feedback`. | Both are inferred as `qualitative_text` with `feedback_column` role. |
+| Detect rating columns | Inspect satisfaction, ease, and NPS columns. | Rating-style columns are inferred as `rating` or numeric with rating role where appropriate. |
+| Detect segments | Inspect department, region, role, product, service category. | Likely grouping columns are suggested as `segment_column`. |
+| Detect date column | Inspect submitted date. | Column is inferred as `date` with `date_column` role. |
+
 ### AI Analysis
 
 | Test Case | Steps | Expected Result |
@@ -307,6 +323,32 @@ Recommended automation roadmap:
 | Analyse 200+ responses | Run analysis on larger generated file. | Batches complete, results merge, counts are returned. |
 | Missing API key | Run analysis without configured key in controlled environment. | Backend returns safe configuration error without exposing secrets. |
 | OpenAI transient error | Simulate provider timeout or rate limit. | Retry or user-safe error occurs according to retry policy. |
+
+### Multi-Column Qualitative Analysis
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Analyse two feedback columns | Send `feedback_columns` with `main_feedback` and `improvement_feedback`. | Analysis succeeds and returns results from both columns. |
+| Preserve old request | Send old `feedback_column` request. | Analysis succeeds with backwards-compatible response fields. |
+| Preserve source metadata | Download multi-column CSV. | Each row includes `source_row_index` and `source_feedback_column`. |
+| Invalid feedback column in list | Include missing column in `feedback_columns`. | API returns safe validation error. |
+
+### Quantitative Summary
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Summarize ratings | Analyse mixed dataset with rating columns. | Response includes count, mean, median, min, max, standard deviation, and rating distribution. |
+| Missing numeric values | Use dataset with blanks in rating column. | Summary ignores missing values and reports correct count. |
+| Non-rating numeric column | Upload numeric identifier column. | Identifier is not treated as a rating summary when role detection marks it as identifier. |
+
+### Segment Detection and Cross-Analysis
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Sentiment by segment | Analyse mixed dataset. | `cross_analysis.sentiment_by_segment` contains segment-level sentiment counts. |
+| Themes by segment | Analyse mixed dataset. | `cross_analysis.top_themes_by_segment` contains top themes by segment value. |
+| Average rating by segment | Analyse mixed dataset with rating columns. | `cross_analysis.average_rating_by_segment` contains rating averages by segment. |
+| Notable differences | Analyse mixed dataset with varied ratings/sentiment. | `cross_analysis.notable_differences` contains concise directional highlights where differences are large enough. |
 
 ### Theme Counts
 
@@ -340,6 +382,7 @@ Recommended automation roadmap:
 | Check charts | Open report PDF. | Theme and sentiment charts render clearly. |
 | Larger dataset report | Generate report from 200+ response analysis. | Report remains readable and professional. |
 | Missing PDF | Request unavailable PDF. | User receives safe not-found error. |
+| Dataset sections | Generate PDF from mixed dataset. | PDF includes dataset overview, column profile summary, quantitative summary, segment insights, and cross-analysis highlights when relevant. |
 
 ### Dashboard
 
@@ -419,6 +462,8 @@ Before a release:
 - Security-sensitive logs are reviewed.
 - Accessibility-critical flows are checked.
 - Sample data and larger dataset tests pass.
+- Mixed 100-row dataset test passes.
+- Old single-column request and new multi-column request both pass.
 
 ## 16. Related Documents
 
@@ -436,3 +481,4 @@ Before a release:
 | Version | Date | Author | Summary |
 |---|---|---|---|
 | 1.0 | 2026-07-05 | Codex | Created Version 1 SurveyIQ testing strategy and feature-level test plan. |
+| 1.1 | 2026-07-05 | Codex | Added tests for column profiling, multi-column qualitative analysis, quantitative summaries, segment detection, and cross-analysis. |

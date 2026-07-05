@@ -159,6 +159,28 @@ Status definitions:
 **Status:** Open  
 **Related Component:** Documentation
 
+### Issue ID: KI-011
+
+**Priority:** P2  
+**Description:** Cross-analysis is lightweight and directional in the MVP.  
+**Current Behaviour:** SurveyIQ returns sentiment by segment, top themes by segment, average ratings by segment, and notable differences using deterministic grouping over the uploaded dataset. It does not yet provide statistical significance testing, configurable thresholds, longitudinal trends, or full dashboard exploration.  
+**Expected Behaviour:** Future SaaS versions may provide richer analytics with saved datasets, filters, trend comparisons, and stronger statistical context.  
+**Workaround:** Treat cross-analysis highlights as directional management signals and review the exported CSV for deeper analysis.  
+**Planned Fix:** Add richer dashboard and analytics capabilities after persistence, projects, and reporting workflows are established.  
+**Status:** Open  
+**Related Component:** Cross-analysis, reporting, dashboard
+
+### Issue ID: KI-012
+
+**Priority:** P2  
+**Description:** Column role detection is heuristic.  
+**Current Behaviour:** Column profiles infer type and suggested role from column names, values, cardinality, and simple patterns. Edge-case datasets may classify columns imperfectly.  
+**Expected Behaviour:** Users should eventually be able to confirm or override suggested column roles in the frontend.  
+**Workaround:** Use the existing feedback column selector or API `feedback_columns` list to explicitly choose the qualitative columns to analyse.  
+**Planned Fix:** Add frontend controls for reviewing column profiles and confirming roles in a future workflow iteration.  
+**Status:** Open  
+**Related Component:** Column profiling, upload, analysis configuration
+
 ## 3. Watchlist
 
 - AI consistency for unusual survey formats.
@@ -170,6 +192,8 @@ Status definitions:
 - Frontend handling of long-running requests.
 - Accessibility of charts and report previews.
 - Security implications of uploaded customer feedback in future SaaS environments.
+- Segment detection accuracy for unusual internal naming conventions.
+- Cross-analysis readability when many segment columns are present.
 
 ## 4. Resolved Issues
 
@@ -190,3 +214,4 @@ No resolved issues are recorded in the Version 1 issue register yet.
 |---|---|---|---|
 | 0.1 | TBD | TBD | Initial known issues starter document. |
 | 1.0 | 2026-07-05 | Codex | Migrated and expanded known issues into Version 1 operational issue register. |
+| 1.1 | 2026-07-05 | Codex | Added known issues for lightweight cross-analysis and heuristic column role detection. |

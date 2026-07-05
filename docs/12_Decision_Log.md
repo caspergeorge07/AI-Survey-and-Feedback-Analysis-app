@@ -389,6 +389,39 @@ Decision statuses:
 - [README.md](README.md)
 - [11_Project_Tracker.md](11_Project_Tracker.md)
 
+### Decision ID: DEC-013
+
+**Title:** Expand SurveyIQ from single-column qualitative analysis to dataset-level feedback intelligence  
+**Date:** 2026-07-05  
+**Status:** Accepted  
+**Owner:** Product and Engineering
+
+**Context:** SurveyIQ began as a focused MVP that analysed one selected free-text feedback column. Real survey exports often include multiple open-text questions, rating columns, dates, and segment columns such as department, region, product, or service category. Users need SurveyIQ to understand more of the dataset while preserving the reliable single-column workflow.
+
+**Decision:** Expand the backend in an MVP-compatible way to profile all uploaded columns, support optional multi-column qualitative analysis through `feedback_columns`, generate quantitative summaries for numeric/rating columns, detect likely segment columns from provided dataset names and values, produce lightweight cross-analysis, and add optional PDF report sections for dataset context.
+
+**Alternatives Considered:**
+
+- Replace the existing single-column workflow with a new dataset workflow.
+- Build a full analytics platform with persistence, dashboards, and configurable metrics.
+- Keep SurveyIQ limited to one text column until SaaS foundations exist.
+- Send the entire dataset to the AI model for all analysis.
+
+**Consequences:**
+
+- Existing frontend and API usage continue to work through `feedback_column`.
+- New response fields are additive and optional.
+- Analysed CSV exports now preserve source row and source feedback column.
+- Quantitative and segment analysis remains lightweight and deterministic for MVP safety.
+- Future frontend work can expose richer dataset intelligence without another backend contract break.
+
+**Related Documents:**
+
+- [08_AI_Architecture.md](08_AI_Architecture.md)
+- [09_API_Standards.md](09_API_Standards.md)
+- [11_Project_Tracker.md](11_Project_Tracker.md)
+- [16_Test_Plan.md](16_Test_Plan.md)
+
 ## 3. Pending Decisions
 
 - Which database should support the first SaaS version.
@@ -421,3 +454,4 @@ No superseded decisions have been recorded yet.
 |---|---|---|---|
 | 0.1 | TBD | TBD | Initial decisions starter document. |
 | 1.0 | 2026-07-05 | Codex | Migrated and expanded into Version 1 architecture decision log. |
+| 1.1 | 2026-07-05 | Codex | Added DEC-013 for dataset-level feedback intelligence expansion. |

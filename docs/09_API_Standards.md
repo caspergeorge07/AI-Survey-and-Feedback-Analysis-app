@@ -146,6 +146,17 @@ Example analysis request shape:
 }
 ```
 
+Multi-column analysis request shape:
+
+```json
+{
+  "upload_id": "local-or-persistent-id",
+  "feedback_columns": ["main_feedback", "improvement_feedback"]
+}
+```
+
+`feedback_column` remains supported for backwards compatibility. If `feedback_columns` is provided, the backend analyses every selected qualitative column and preserves source metadata in the response and analysed CSV.
+
 ## 7. Response Format
 
 Successful responses should be JSON unless returning a file.
@@ -169,10 +180,13 @@ Analysis response should preserve:
 - Sentiment.
 - Confidence score.
 - Short reason.
+- Source row index.
+- Source feedback column.
 - Theme counts.
 - Sentiment counts.
 - Executive summary.
 - Download references where available.
+- Additive dataset-level fields: `column_profiles`, `selected_feedback_columns`, `quantitative_summary`, `segment_summary`, `cross_analysis`, and `enhanced_executive_summary`.
 
 ## 8. Error Responses
 
@@ -435,27 +449,41 @@ Purpose:
 
 - Upload CSV or Excel data.
 - Return upload ID, detected columns, preview rows, and row count.
+- Return column profiles for every uploaded column.
 
 Important behaviour:
 
 - Preview should show the first 10 rows.
 - File parsing should use pandas.
 - Errors should clearly indicate unsupported or unreadable files.
+- Column profiles infer type, missing/non-empty counts, unique count, sample values, and suggested role.
 
 ### `POST /analyse`
 
 Purpose:
 
 - Analyse the selected feedback column.
+- Analyse one or more selected feedback columns when `feedback_columns` is provided.
 - Return frontend-compatible response-level and overall results.
 
 Important behaviour:
 
 - Requires valid `upload_id`.
-- Requires valid `feedback_column`.
+- Requires valid `feedback_column` or non-empty `feedback_columns`.
 - Uses OpenAI API when configured.
 - Does not expose API key.
 - Preserves analysed CSV download.
+- Preserves existing old fields while adding dataset intelligence fields.
+- Multi-column CSV exports include `source_row_index` and `source_feedback_column`.
+
+Additive response fields:
+
+- `column_profiles`
+- `selected_feedback_columns`
+- `quantitative_summary`
+- `segment_summary`
+- `cross_analysis`
+- `enhanced_executive_summary`
 
 ### Download Endpoints
 
@@ -495,3 +523,4 @@ GraphQL should not be introduced until REST API contracts, authentication, autho
 |---|---|---|---|
 | 0.1 | TBD | TBD | Initial starter document. |
 | 0.2 | 2026-07-05 | Codex | Expanded API standards with REST conventions, versioning, errors, security, OpenAPI guidance, and MVP endpoint expectations. |
+| 1.1 | 2026-07-05 | Codex | Documented additive dataset-level analysis fields, multi-column qualitative analysis request support, and source metadata export. |

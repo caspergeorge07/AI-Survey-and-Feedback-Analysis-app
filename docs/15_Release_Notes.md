@@ -46,6 +46,14 @@ The MVP is designed for local validation of the core workflow, not production mu
 
 ## 3. Major Features
 
+### Dataset-Level Feedback Intelligence
+
+SurveyIQ can now understand more of the uploaded dataset, not just one free-text column. The backend profiles columns, identifies likely feedback, rating, segment, date, and identifier columns, and adds dataset context to analysis outputs.
+
+### Multi-Column Feedback Analysis
+
+Users and API clients can analyse one or more qualitative feedback columns in a single run. Existing single-column analysis remains supported.
+
 ### CSV and Excel Upload
 
 Users can upload survey data in CSV or Excel format. SurveyIQ reads the file and prepares it for analysis.
@@ -80,6 +88,8 @@ SurveyIQ produces management-oriented summaries, including main themes, risks, r
 
 Users can download a CSV containing the original responses and AI-generated analysis fields.
 
+When multiple feedback columns are analysed, each exported response includes the source row index and source feedback column.
+
 ### Professional PDF Report
 
 SurveyIQ can generate a management-ready PDF report with:
@@ -100,6 +110,9 @@ SurveyIQ can generate a management-ready PDF report with:
 - Improved AI analysis quality through a multi-stage workflow.
 - Added canonical theme consolidation to reduce duplicate or overlapping themes.
 - Added batching so larger survey files can be analysed more safely.
+- Added quantitative summaries for rating and numeric columns.
+- Added segment-level summaries and lightweight cross-analysis.
+- Added optional report sections for dataset overview, column profiles, quantitative summary, segment insights, and cross-analysis highlights.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
 
@@ -130,6 +143,8 @@ Current MVP limitations:
 - Larger analyses can still take several minutes.
 - PDF report download visibility may require frontend polish depending on the current UI.
 - AI results should be reviewed for important business decisions, especially low-confidence responses.
+- Cross-analysis is intentionally lightweight in the MVP and should be treated as directional.
+- Segment detection uses only supplied column names and values; it does not infer sensitive attributes beyond the dataset.
 
 See [14_Known_Issues.md](14_Known_Issues.md) for the full known issues register.
 
@@ -145,6 +160,7 @@ Planned or future capabilities:
 - Usage tracking.
 - Dashboard summaries.
 - Theme review and sentiment review.
+- Richer frontend exposure of column profiles, quantitative summaries, and cross-analysis.
 - AI Assistant as a right-side contextual drawer.
 - Database-backed persistence.
 - Future enterprise capabilities such as SSO, custom taxonomy, data governance, benchmarking, and advanced permissions.
@@ -165,3 +181,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 |---|---|---|---|
 | 0.1 | TBD | TBD | Initial release notes starter document. |
 | 1.0 | 2026-07-05 | Codex | Rewritten as Version 1 customer-facing release notes with feature, improvement, limitation, and upcoming-feature sections. |
+| 1.1 | 2026-07-05 | Codex | Added release notes for dataset-level feedback intelligence and multi-column analysis. |

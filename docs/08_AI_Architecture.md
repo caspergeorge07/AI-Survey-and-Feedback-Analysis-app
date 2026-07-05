@@ -75,6 +75,21 @@ The approved SurveyIQ workflow is a staged pipeline:
 
 The pipeline should separate response-level analysis from overall insight generation so the product can remain explainable and auditable.
 
+### Dataset-Level Feedback Intelligence
+
+SurveyIQ now treats the uploaded file as a dataset, not only as a container for one free-text column. The MVP-compatible expansion adds deterministic dataset intelligence around the existing AI pipeline:
+
+- Profile every uploaded column.
+- Infer whether columns are qualitative text, numeric, rating, categorical, boolean, date, or unknown.
+- Suggest roles such as feedback column, rating column, segment column, date column, identifier column, or ignore.
+- Allow one or more qualitative feedback columns to be analysed in a single run.
+- Preserve `source_row_index` and `source_feedback_column` for each analysed response.
+- Generate quantitative summaries for numeric and rating columns.
+- Detect likely segment columns from column names and provided values.
+- Produce lightweight cross-analysis such as sentiment by segment, top themes by segment, and average rating by segment.
+
+This expansion is intentionally not a full analytics platform. The AI pipeline remains focused on qualitative interpretation, while deterministic pandas-based analysis provides supporting dataset context.
+
 ## 3. Prompt Engineering Strategy
 
 Prompting principles:
@@ -395,11 +410,13 @@ Required checks:
 
 - Output is valid structured data.
 - Each response has an original response, theme, sentiment, confidence score, and reason.
+- Each multi-column response preserves source row index and source feedback column.
 - Sentiment is one of the approved labels.
 - Confidence is numeric and within expected range.
 - Every response is assigned to a canonical theme.
 - Theme and sentiment counts match response-level records.
 - Empty or invalid responses are handled safely.
+- Column profiles and quantitative summaries must not infer sensitive personal attributes beyond column names and values supplied in the dataset.
 
 If checks fail, the system should retry where safe or return a clear analysis failure message.
 
@@ -627,6 +644,8 @@ Operational metrics:
 - Token cost per response.
 - Retry rate.
 - Partial failure rate.
+- Multi-column response count.
+- Cross-analysis availability by dataset.
 
 Evaluation should use both sample datasets and real anonymized customer datasets where permitted.
 
@@ -645,3 +664,4 @@ Evaluation should use both sample datasets and real anonymized customer datasets
 |---|---|---|---|
 | 0.1 | TBD | TBD | Initial starter document. |
 | 0.2 | 2026-07-05 | Codex | Expanded AI architecture with staged pipeline, prompt strategy, batching, quality checks, OpenAI integration, and evaluation guidance. |
+| 1.1 | 2026-07-05 | Codex | Added dataset-level feedback intelligence, multi-column qualitative analysis, quantitative context, and cross-analysis guidance. |
