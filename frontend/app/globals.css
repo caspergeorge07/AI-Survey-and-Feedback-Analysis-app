@@ -47,6 +47,7 @@ a {
 
 button,
 input,
+textarea,
 select {
   font: inherit;
 }
@@ -1281,6 +1282,344 @@ td {
   padding: 0.85rem;
 }
 
+.projects-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.project-toolbar-card,
+.project-detail,
+.project-assignment-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.project-stats-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.project-controls {
+  align-items: end;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(240px, 1.4fr) repeat(3, minmax(160px, 1fr));
+}
+
+.form-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.form-field span {
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  min-height: 42px;
+  padding: 0.65rem 0.75rem;
+  width: 100%;
+}
+
+.form-field textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.form-field input[type="color"] {
+  padding: 0.25rem;
+}
+
+.form-field.full {
+  grid-column: 1 / -1;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus,
+.project-tabs button:focus-visible,
+.text-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.project-card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.project-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: 0.85rem;
+  overflow: hidden;
+  padding: 0 1rem 1rem;
+}
+
+.project-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.project-card-accent {
+  height: 5px;
+  margin: 0 -1rem;
+}
+
+.project-card-header {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+}
+
+.project-card-header h3 {
+  margin-bottom: 0.1rem;
+}
+
+.project-card-header span,
+.project-card p,
+.project-card-footer,
+.project-card-stats span,
+.activity-mini-row span,
+.project-detail-topline,
+.project-report-list small,
+.project-timeline time {
+  color: var(--color-muted);
+}
+
+.project-icon {
+  align-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 800;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.project-card-stats {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.project-card-stats span {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.65rem;
+}
+
+.project-card-stats strong {
+  color: var(--color-ink);
+  font-size: 1.05rem;
+}
+
+.project-card-footer,
+.project-detail-topline,
+.modal-actions,
+.project-danger-zone,
+.table-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: space-between;
+}
+
+.project-empty-card {
+  min-height: 220px;
+}
+
+.project-detail-topline {
+  font-size: 0.88rem;
+  justify-content: flex-start;
+}
+
+.text-button {
+  background: transparent;
+  border: 0;
+  color: var(--color-primary);
+  font-weight: 800;
+  padding: 0;
+}
+
+.project-tabs {
+  border-bottom: 1px solid var(--color-line);
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+.project-tabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: var(--color-muted);
+  font-weight: 800;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  white-space: nowrap;
+}
+
+.project-tabs button.active {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.project-tab-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.project-overview-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.project-insight-panel {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.55rem;
+  min-height: 180px;
+  padding: 1rem;
+}
+
+.activity-mini-row {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.project-table-wrap table {
+  min-width: 760px;
+}
+
+.table-actions {
+  justify-content: flex-start;
+}
+
+.project-report-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.project-report-list .report-row {
+  align-items: flex-start;
+}
+
+.project-report-list .report-row div {
+  min-width: 0;
+}
+
+.project-report-list .report-row span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.project-timeline {
+  display: grid;
+  gap: 0.85rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project-timeline li {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+
+.timeline-dot {
+  background: var(--color-primary);
+  border: 4px solid var(--color-primary-soft);
+  border-radius: 999px;
+  height: 18px;
+  margin-top: 0.2rem;
+  width: 18px;
+}
+
+.project-timeline p {
+  color: var(--color-muted);
+  margin-bottom: 0.2rem;
+}
+
+.project-settings,
+.project-form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.project-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.project-danger-zone {
+  border-top: 1px solid var(--color-line);
+  justify-content: flex-start;
+  padding-top: 1rem;
+}
+
+.project-panel-empty {
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-md);
+  min-height: 180px;
+  padding: 1rem;
+}
+
+.modal-scrim {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.48);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 50;
+}
+
+.project-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  gap: 1rem;
+  max-height: min(760px, calc(100vh - 2rem));
+  max-width: 720px;
+  overflow-y: auto;
+  padding: 1.25rem;
+  width: min(720px, 100%);
+}
+
+.project-modal form {
+  display: grid;
+  gap: 1rem;
+}
+
 .sr-only {
   clip: rect(0, 0, 0, 0);
   border: 0;
@@ -1418,6 +1757,11 @@ td {
   .upload-row,
   .two,
   .metric-grid,
+  .project-card-grid,
+  .project-controls,
+  .project-form-grid,
+  .project-overview-grid,
+  .project-stats-grid,
   .type-summary-grid,
   .option-grid,
   .review-grid,
@@ -1427,6 +1771,15 @@ td {
   .dashboard-grid-secondary,
   .sentiment-summary {
     grid-template-columns: 1fr;
+  }
+
+  .project-card-header {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .project-card-header .badge {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 
   .button,
@@ -1502,6 +1855,10 @@ td {
   }
 
   .metric-grid,
+  .project-card-grid,
+  .project-controls,
+  .project-overview-grid,
+  .project-stats-grid,
   .type-summary-grid,
   .option-grid,
   .review-grid,

@@ -93,12 +93,12 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profile, column intelligence, analysis options, review, processing, and results | Completed |
 | Sprint 8 | Executive dashboard with KPI cards, recent analyses, recent reports, theme and sentiment visualisations, recommended actions, activity feed, and quick actions | Completed |
 | Sprint 9 | Live Executive Dashboard Integration replacing mock dashboard data with latest completed analysis output | Completed |
+| Sprint 10 | Project and Workspace Management with local project persistence, project cards, create modal, project detail tabs, project assignment, and project-linked analyses/reports | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 10: Reports and PDF builder UI | Add UI around the existing PDF report capability. | Reports entry point, report builder UI, section controls where supported, PDF preview/download controls. | Sprint 9, existing PDF endpoint, report wireframes. | Users can generate/access and download PDF reports from the UI while CSV remains available. | PDF download regression, report UI smoke tests, responsive workflow checks. |
 | Sprint 11: AI Assistant interface | Introduce the AI Assistant as a contextual right-side drawer. | Assistant drawer, prompt input, prompt suggestions, context display, loading/error states. | Sprint 6, Sprint 9 context, AI architecture. | Users can open, use, and close the drawer without disrupting core workflows. | Drawer interaction tests, focus/keyboard tests, context-boundary review. |
 | Sprint 12: Authentication and user accounts | Add user account access for SaaS foundation. | Signup, login, forgot password, sessions, protected routes, profile foundation. | Auth provider decision, security standards, app shell. | Users can create accounts, log in, recover access, and reach protected app pages. | Auth functional tests, protected route tests, security review. |
 | Sprint 13: Database and persistent projects | Persist projects, uploads, analyses, and reports. | Database schema, migrations, project records, analysis records, report metadata. | Sprint 12, database decision, storage strategy. | Users can reopen projects, analyses, and reports across sessions. | Migration tests, CRUD tests, persistence regression, authorization checks. |
@@ -116,6 +116,7 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Analysed CSV download | P0 | Done | MVP | Analysis output | M | Backend | User can download response-level analysed CSV. | [09_API_Standards.md](09_API_Standards.md) | TBD | Functional, file download |
 | PDF management report | P0 | Done | MVP | Analysis output, report generation | L | Backend | PDF includes executive summary, sentiment, themes, highlights, risks, actions, conclusions, and charts. | [04_Wireframes.md](04_Wireframes.md) | TBD | Report, visual QA |
 | Dataset-level feedback intelligence | P1 | Done | MVP Expansion | Existing upload and analysis workflow | L | Backend/AI | Backend profiles all columns, supports multi-column qualitative analysis, summarizes ratings, detects segments, and returns cross-analysis fields without breaking old workflow. | [08_AI_Architecture.md](08_AI_Architecture.md), [09_API_Standards.md](09_API_Standards.md) | TBD | API, AI, regression, report |
+| Local project workspace | P1 | Done | Sprint 10 | App shell, latest-analysis state, localStorage | L | Frontend | Users can create, search, filter, sort, open, archive, duplicate, and delete local projects; completed analyses can be assigned to projects without backend persistence. | [04_Wireframes.md](04_Wireframes.md), [16_Test_Plan.md](16_Test_Plan.md) | TBD | Frontend build, UI smoke, responsive, MVP regression |
 | Documentation Version 1 | P0 | In Progress | Docs V1 | Approved docs 01-10 | M | Product/Engineering | Index, README, tracker, logs, test plan, and operational docs complete. | [INDEX.md](INDEX.md) | TBD | Documentation review |
 | Projects and persistence | P1 | Planned | SaaS Foundation | Database, auth | L | Full Stack | Users can save and revisit projects, analyses, and reports. | [06_Product_Roadmap.md](06_Product_Roadmap.md) | TBD | Integration, regression |
 | Authentication | P1 | Planned | SaaS Foundation | User model, auth provider decision | L | Backend/Frontend | Users can sign up, log in, reset password, and access protected routes. | [02_Application_Sitemap.md](02_Application_Sitemap.md) | TBD | Security, functional |
@@ -133,6 +134,7 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | Responsive app shell | P1 | Done | Sprint 6 | Design system | L | Frontend | Left sidebar/top bar pattern works across desktop, tablet, and mobile. | [05_Design_System.md](05_Design_System.md) | TBD | Responsive, accessibility |
 | Dataset Intelligence Upload Wizard | P1 | Done | Sprint 7 | App shell, upload/analyse APIs, backend column profiles | L | Frontend | Users can move through upload, dataset profile, column intelligence, analysis options, review, processing, and results without backend behaviour changes. | [03_User_Journey.md](03_User_Journey.md), [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, wizard regression, API compatibility, responsive checks |
 | Executive Dashboard | P1 | Done | Sprint 9 | App shell, dashboard wireframes, latest completed analysis state | M | Frontend | Dashboard is the primary landing experience and shows latest-analysis KPIs, recent analysis, recent reports, top themes, sentiment, recommended actions, recent activity, and quick actions using live analysis output from the current session. | [04_Wireframes.md](04_Wireframes.md), [05_Design_System.md](05_Design_System.md) | TBD | Frontend build, UI smoke, responsive checks, MVP regression, CSV/PDF download regression |
+| Project Management Module | P1 | Done | Sprint 10 | App shell, local workspace state | L | Frontend | Projects page, create modal, project cards, search, filters, sorting, responsive layout, project statistics, and project detail tabs are available without backend changes. | [04_Wireframes.md](04_Wireframes.md), [16_Test_Plan.md](16_Test_Plan.md) | TBD | Frontend build, UI smoke, responsive checks, localStorage checks |
 
 ## 7. Backend
 
@@ -206,8 +208,8 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 
 | Feature Name | Priority | Status | Sprint | Dependencies | Estimated Effort | Owner | Definition of Done | Related Documentation | Related GitHub Issue | Testing Required |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Projects list | P1 | Planned | SaaS Foundation | Database, auth | M | Full Stack | Users can list, create, and open projects. | [02_Application_Sitemap.md](02_Application_Sitemap.md) | TBD | Functional |
-| Project detail | P1 | Planned | SaaS Foundation | Projects list | L | Full Stack | Project pages show analyses, uploads, reports, and context. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, integration |
+| Projects list | P1 | Done | Sprint 10 | Local workspace state | M | Frontend | Users can list, create, search, filter, sort, and open local projects. | [02_Application_Sitemap.md](02_Application_Sitemap.md) | TBD | Functional, responsive |
+| Project detail | P1 | Done | Sprint 10 | Projects list, local workspace state | L | Frontend | Project detail tabs show overview, analyses, reports, activity, and settings using local project records. | [04_Wireframes.md](04_Wireframes.md) | TBD | UI, integration |
 
 ## 16. Analysis
 
@@ -278,3 +280,4 @@ This is the agreed sprint plan for the current SurveyIQ delivery sequence. It ca
 | 1.2 | 2026-07-05 | Codex | Recorded Sprint 7 Dataset Intelligence Upload Wizard completion and updated tracker statuses. |
 | 1.3 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and updated frontend/dashboard tracker statuses. |
 | 1.4 | 2026-07-05 | Codex | Recorded Sprint 9 Live Executive Dashboard Integration and updated dashboard tracker statuses. |
+| 1.5 | 2026-07-05 | Codex | Recorded Sprint 10 Project and Workspace Management completion and local persistence scope. |

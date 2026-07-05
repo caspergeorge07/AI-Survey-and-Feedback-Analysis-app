@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, FormEvent, RefObject, useMemo, useRef, useState } from "react";
-import { AnalysisResult, useAnalysisState } from "./analysis-state";
+import { AnalysisResult, Project, useAnalysisState } from "./analysis-state";
 import { SectionHeader } from "./shell";
 import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from "./ui";
 
@@ -256,7 +256,7 @@ function redactErrorPayload(value: unknown, depth = 0): unknown {
 }
 
 export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWizardProps) {
-  const { setLatestAnalysis } = useAnalysisState();
+  const { projects, recordCompletedAnalysis, selectedProjectId, setSelectedProjectId } = useAnalysisState();
   const [step, setStep] = useState<WizardStep>("upload");
   const [file, setFile] = useState<File | null>(null);
   const [upload, setUpload] = useState<UploadResponse | null>(null);
@@ -299,6 +299,7 @@ export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWiz
     () => buildEstimates(columnProfiles, selectedQualitativeColumns, upload?.row_count ?? 0),
     [columnProfiles, selectedQualitativeColumns, upload?.row_count],
   );
+  const activeProjects = useMemo(() => projects.filter((project) => !project.archived), [projects]);
 
   function resetForNewFile(nextFile: File | null) {
     setFile(nextFile);
@@ -382,7 +383,7 @@ export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWiz
       });
       const data = await readApiResponse<AnalysisResult>(response, "Analysis failed.");
       setAnalysis(data);
-      setLatestAnalysis({
+      recordCompletedAnalysis({
         analysis: data,
         completedAt: new Date().toISOString(),
         filename: upload.filename,
@@ -422,6 +423,13 @@ export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWiz
     <section className="wizard-shell" id="analysis">
       <WizardProgress currentStep={step} />
       {error ? <ErrorState message={error} /> : null}
+      {step !== "processing" && step !== "results" ? (
+        <ProjectAssignmentCard
+          projects={activeProjects}
+          selectedProjectId={selectedProjectId}
+          onSelectProject={setSelectedProjectId}
+        />
+      ) : null}
 
       {step === "upload" ? (
         <UploadStep
@@ -505,6 +513,39 @@ export function DatasetIntelligenceWizard({ apiBaseUrl }: DatasetIntelligenceWiz
         />
       ) : null}
     </section>
+  );
+}
+
+function ProjectAssignmentCard({
+  onSelectProject,
+  projects,
+  selectedProjectId,
+}: {
+  onSelectProject: (projectId: string | null) => void;
+  projects: Project[];
+  selectedProjectId: string | null;
+}) {
+  return (
+    <Card className="wizard-card project-assignment-card">
+      <SectionHeader
+        title="Project Assignment"
+        detail="Optional: file this analysis under an existing project before upload."
+      />
+      <label className="form-field">
+        <span>Project</span>
+        <select value={selectedProjectId ?? ""} onChange={(event) => onSelectProject(event.target.value || null)}>
+          <option value="">No project selected</option>
+          {projects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {!projects.length ? (
+        <p className="muted">Create a project in the Projects section to organise analyses and reports.</p>
+      ) : null}
+    </Card>
   );
 }
 

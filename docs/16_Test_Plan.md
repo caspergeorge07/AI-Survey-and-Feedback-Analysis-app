@@ -453,8 +453,17 @@ Recommended automation roadmap:
 
 | Test Case | Steps | Expected Result |
 |---|---|---|
-| Create project | Create project in future SaaS flow. | Project appears in list and can be opened. |
-| Link analysis to project | Run analysis inside project. | Analysis appears on project detail page. |
+| Projects page renders | Open the Projects section. | Project statistics, search, filters, sorting, create action, and cards/empty state are visible. |
+| Create project | Open Create Project modal, enter name, description, category, owner, colour, and icon, then submit. | Project appears in the local project list and can be opened. |
+| Project search | Enter matching and non-matching search terms. | Project list updates without breaking layout. |
+| Project filters | Apply category and status filters. | Active, archived, all, and category views show the expected project set. |
+| Project sorting | Switch between Recently updated, Alphabetical, Most analyses, Newest, and Oldest. | Project ordering changes as selected. |
+| Project detail tabs | Open a project and switch Overview, Analyses, Reports, Activity, and Settings. | Each tab renders without navigation or API contract changes. |
+| Project assignment | Select an existing project before upload in the Dataset Intelligence Wizard. | Completed analysis is associated with the selected local project. |
+| Link analysis to project | Run analysis after selecting a project. | Project detail shows completed analysis, response count, CSV link, PDF link when available, report record, and activity timeline entries. |
+| Project settings | Rename, archive, duplicate, and delete a local project with confirmation for delete. | Local project state updates correctly and other projects remain intact. |
+| Local persistence | Refresh the browser after creating a project. | Project data remains available through browser localStorage. |
+| Responsive projects layout | Check desktop, tablet, and mobile widths. | Project cards, controls, modal, detail tabs, and tables remain usable without horizontal page overflow. |
 
 ### Authentication
 
@@ -528,6 +537,7 @@ Before a release:
 - Sidebar collapse and mobile drawer navigation are verified.
 - Sprint 8 dashboard regression passes for KPI cards, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, quick actions, and responsive layout.
 - Sprint 9 live dashboard regression passes for latest-analysis KPIs, top themes, sentiment, recommended actions, recent analysis, recent reports, activity, CSV/PDF quick links, and empty session state.
+- Sprint 10 project workspace regression passes for project creation, search, filters, sorting, detail tabs, project assignment, localStorage persistence, and project-linked analysis/report records.
 - Sprint 7 wizard regression passes across upload, profile, column intelligence, options, review, processing, and results.
 - Column intelligence exposes backend profiling fields without requiring backend behaviour changes.
 - Structured wizard API errors render as readable user-facing text and never as `[object Object]`.
@@ -554,3 +564,4 @@ Before a release:
 | 1.4 | 2026-07-05 | Codex | Added regression tests for readable structured API error handling in the Dataset Intelligence Wizard. |
 | 1.5 | 2026-07-05 | Codex | Added Sprint 8 Executive Dashboard test cases and release readiness checks. |
 | 1.6 | 2026-07-05 | Codex | Added Sprint 9 live dashboard integration test cases and session-local state coverage. |
+| 1.7 | 2026-07-05 | Codex | Added Sprint 10 project workspace, local persistence, and project assignment test cases. |

@@ -39,6 +39,12 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Added
 
+- Sprint 10 Project and Workspace Management.
+- LocalStorage-backed workspace state for projects, selected project assignment, latest analysis metadata, project analyses, project reports, and activity.
+- Projects page with project cards, search, category/status filters, sorting, empty state, and workspace/project statistics.
+- Create Project modal with name, description, category, owner, colour, and icon fields.
+- Project Detail experience with Overview, Analyses, Reports, Activity, and Settings tabs.
+- New Analysis project selector so completed analyses can be assigned to an existing local project before upload.
 - Sprint 9 Live Executive Dashboard Integration.
 - Lightweight frontend analysis state so the dashboard updates immediately after a completed analysis without authentication or database persistence.
 - Dashboard KPI cards powered by the latest completed analysis: responses analysed, detected themes, sentiment distribution, confidence summary, and recommended actions.
@@ -77,6 +83,8 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Changed
 
+- Extended the previous latest-analysis state into local workspace state while preserving the existing upload, analyse, CSV, and PDF backend contracts.
+- Project-linked analyses now populate local project overview statistics, analysis rows, report rows, and activity timeline entries.
 - Replaced Executive Dashboard mock/demo data with live output from the most recent completed analysis in the current frontend session.
 - Dashboard empty states now appear when no analysis has been completed in the current session.
 - Dashboard is now the active landing page while the existing Dataset Intelligence Wizard remains available on the same page under the Analysis section.
@@ -125,12 +133,12 @@ The changelog is written for internal product and engineering history. Customer-
 | Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profiling, column intelligence, analysis options, review, processing, and results flow | Completed |
 | Sprint 8 | Executive Dashboard with KPI cards, recent analyses, reports, top themes, sentiment, recommended actions, activity, and quick actions | Completed |
 | Sprint 9 | Live Executive Dashboard Integration replacing mock dashboard data with latest completed analysis output | Completed |
+| Sprint 10 | Project and Workspace Management with local project persistence, project cards, create modal, project detail tabs, project assignment, and project-linked analyses/reports | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 10: Reports and PDF builder UI | Add UI for report workflow. | Reports entry, builder UI, PDF preview/download controls. | Sprint 9, PDF endpoint. | Users can access and download reports from UI. | PDF download regression, report UI smoke tests. |
 | Sprint 11: AI Assistant interface | Add contextual assistant drawer. | Drawer UI, prompt input, suggestions, context display, states. | Sprint 6, Sprint 9 context. | Assistant drawer works without disrupting core workflow. | Drawer, focus, keyboard, and context-boundary tests. |
 | Sprint 12: Authentication and user accounts | Add SaaS account access. | Signup, login, forgot password, sessions, protected routes. | Auth decision, security standards. | Users can create accounts and access protected pages. | Auth, protected route, and security tests. |
 | Sprint 13: Database and persistent projects | Persist product work. | Schema, migrations, projects, analyses, reports. | Sprint 12, database decision. | Users can reopen saved work across sessions. | Migration, CRUD, persistence, authorization tests. |
@@ -354,3 +362,4 @@ The changelog is written for internal product and engineering history. Customer-
 | 1.5 | 2026-07-05 | Codex | Recorded Sprint 7 bug fix for readable wizard API error messages and safe structured error handling. |
 | 1.6 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and dashboard regression coverage. |
 | 1.7 | 2026-07-05 | Codex | Recorded Sprint 9 Live Executive Dashboard Integration and latest-analysis state coverage. |
+| 1.8 | 2026-07-05 | Codex | Recorded Sprint 10 Project and Workspace Management completion and localStorage workspace scope. |

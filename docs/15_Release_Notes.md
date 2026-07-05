@@ -29,6 +29,7 @@ For internal engineering history, use [13_Change_Log.md](13_Change_Log.md).
 | Version | Release Name | Status | Summary |
 |---|---|---|---|
 | 1.0 | Documentation Library Version 1 | Draft | Complete professional documentation set for product, engineering, AI, API, brand, testing, and operations. |
+| 0.9 | Project and Workspace Management | Draft | Added local project management, project detail tabs, project assignment, and project-linked analysis/report records. |
 | 0.8 | Live Executive Dashboard Integration | Draft | Replaced dashboard demo data with the latest completed analysis output for the current local session. |
 | 0.7 | Executive Dashboard | Draft | Added the primary dashboard landing experience with KPIs, recent work, themes, sentiment, actions, activity, and quick actions. |
 | 0.6 | Dataset Intelligence Upload Wizard | Draft | Replaced the simple upload flow with a guided wizard for upload, profiling, column intelligence, options, review, processing, and results. |
@@ -65,6 +66,19 @@ SurveyIQ now opens to an executive dashboard designed for fast review of feedbac
 - Quick actions.
 
 The dashboard now uses the latest completed analysis from the current local session. After users complete analysis, dashboard KPIs, top themes, sentiment, recommended actions, recent analysis, recent reports, recent activity, and CSV/PDF quick links update from real backend output.
+
+### Project and Workspace Management
+
+SurveyIQ now includes local project management for organising analysis work before backend persistence exists. Users can:
+
+- Create projects with name, description, category, owner, colour, and icon.
+- Search, filter, sort, and open project cards.
+- Review project statistics.
+- Open a project detail view with Overview, Analyses, Reports, Activity, and Settings tabs.
+- Assign a new analysis to an existing project before upload.
+- See completed analyses, generated PDF reports, export links, and activity captured under the selected project.
+
+Project data is stored in browser localStorage for MVP validation and is not yet shared across users, browsers, or devices.
 
 ### Dataset Intelligence Upload Wizard
 
@@ -173,6 +187,7 @@ SurveyIQ can generate a management-ready PDF report with:
 - Added an executive dashboard landing experience that keeps the Dataset Intelligence Wizard available from the same application surface.
 - Replaced executive dashboard demo data with latest-analysis output from the current frontend session.
 - Added live dashboard empty states for sessions where no analysis has been completed yet.
+- Added project management with localStorage-backed workspace state, project assignment, project detail tabs, and project-linked analyses/reports.
 - Added responsive dashboard layouts for desktop, tablet, and mobile.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
@@ -197,14 +212,13 @@ Current MVP limitations:
 
 - Local file storage only.
 - No authentication.
-- No database-backed project library.
-- Dashboard latest-analysis state is session-local and resets on full page reload until database-backed projects are introduced.
+- No backend database-backed project library; projects are stored in browser localStorage for the local MVP.
+- Browser-local project and latest-analysis state can be cleared by browser settings and is not available across devices.
 - No billing or subscription management.
 - No team collaboration.
 - No enterprise governance.
 - Larger analyses can still take several minutes.
-- Projects, full report library, AI Assistant, Settings, and other application pages are not yet fully built.
-- Dashboard content currently uses realistic demo data until database-backed projects, analyses, and reports are introduced.
+- Full SaaS report library, AI Assistant, Settings, and other application pages are not yet fully built.
 - Analysis option toggles are frontend workflow controls in the local MVP; the backend still generates the currently supported analysis outputs.
 - AI results should be reviewed for important business decisions, especially low-confidence responses.
 - Cross-analysis is intentionally lightweight in the MVP and should be treated as directional.
@@ -249,3 +263,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 | 1.3 | 2026-07-05 | Codex | Added Sprint 7 release notes for the Dataset Intelligence Upload Wizard. |
 | 1.4 | 2026-07-05 | Codex | Added Sprint 8 release notes for the Executive Dashboard landing experience. |
 | 1.5 | 2026-07-05 | Codex | Added Sprint 9 release notes for live dashboard integration with latest completed analysis output. |
+| 1.6 | 2026-07-05 | Codex | Added Sprint 10 release notes for Project and Workspace Management. |
