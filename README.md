@@ -1,11 +1,11 @@
 # AI Survey and Feedback Analysis MVP
 
-A local full-stack MVP for uploading survey data, previewing columns, selecting a free-text feedback column, analysing responses with the OpenAI API, and downloading an analysed CSV.
+A local full-stack MVP for uploading survey data, previewing columns, selecting a free-text feedback column, analysing responses with the OpenAI API, and downloading an analysed CSV plus a management PDF report.
 
 ## Project Structure
 
 ```text
-backend/      FastAPI API, local upload/result storage, pandas parsing, OpenAI analysis
+backend/      FastAPI API, local upload/result/report storage, pandas parsing, OpenAI analysis
 frontend/     Next.js app for upload, preview, analysis, and download
 sample_data/  Example CSV to test the flow
 README.md     Setup and troubleshooting
@@ -79,11 +79,13 @@ Then restart `pnpm dev`.
 4. Click **Analyse feedback**.
 5. Review per-response themes, sentiment, confidence, and reasons.
 6. Download the analysed CSV.
+7. Use the `report_download_url` returned by the API to download the management PDF report.
 
 ## Local File Handling
 
 Uploaded files are stored in `backend/storage/uploads/`.
 Analysed CSVs are stored in `backend/storage/results/`.
+Management PDF reports are stored in `backend/storage/reports/`.
 The `backend/storage/` folder is ignored by git.
 
 ## Common Troubleshooting

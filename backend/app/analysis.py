@@ -73,14 +73,22 @@ class ReassignedResponsesPayload(BaseModel):
 class ExecutiveInsightsPayload(BaseModel):
     summary_of_main_themes: str
     executive_summary: str
+    positive_highlights: list[str] = Field(default_factory=list)
+    negative_highlights: list[str] = Field(default_factory=list)
+    key_risks: list[str] = Field(default_factory=list)
     recommended_actions: list[str] = Field(default_factory=list)
+    ai_generated_conclusions: str = ""
 
 
 class OpenAIAnalysisPayload(BaseModel):
     results: list[AnalysedResponse]
     summary_of_main_themes: str
     executive_summary: str
+    positive_highlights: list[str] = Field(default_factory=list)
+    negative_highlights: list[str] = Field(default_factory=list)
+    key_risks: list[str] = Field(default_factory=list)
     recommended_actions: list[str] = Field(default_factory=list)
+    ai_generated_conclusions: str = ""
 
 
 class OverallResults(BaseModel):
@@ -88,7 +96,11 @@ class OverallResults(BaseModel):
     counts_by_theme: dict[str, int]
     counts_by_sentiment: dict[str, int]
     executive_summary: str
+    positive_highlights: list[str] = Field(default_factory=list)
+    negative_highlights: list[str] = Field(default_factory=list)
+    key_risks: list[str] = Field(default_factory=list)
     recommended_actions: list[str] = Field(default_factory=list)
+    ai_generated_conclusions: str = ""
 
 
 class AnalysisResult(BaseModel):
@@ -96,6 +108,7 @@ class AnalysisResult(BaseModel):
     results: list[AnalysedResponse]
     overall: OverallResults
     download_url: str
+    report_download_url: str | None = None
 
 
 PayloadT = TypeVar("PayloadT", bound=BaseModel)
@@ -229,7 +242,11 @@ def analyse_feedback_with_openai(feedback_values: list[str]) -> OpenAIAnalysisPa
         results=results,
         summary_of_main_themes=insights.summary_of_main_themes,
         executive_summary=insights.executive_summary,
+        positive_highlights=insights.positive_highlights,
+        negative_highlights=insights.negative_highlights,
+        key_risks=insights.key_risks,
         recommended_actions=insights.recommended_actions,
+        ai_generated_conclusions=insights.ai_generated_conclusions,
     )
 
 
@@ -550,11 +567,18 @@ def _generate_executive_insights(
         {
           "summary_of_main_themes": "short paragraph summarising the main themes",
           "executive_summary": "brief executive summary for a business audience",
-          "recommended_actions": ["clear recommended action", "clear recommended action"]
+          "positive_highlights": ["specific positive highlight"],
+          "negative_highlights": ["specific negative highlight"],
+          "key_risks": ["specific business or operational risk"],
+          "recommended_actions": ["clear recommended action", "clear recommended action"],
+          "ai_generated_conclusions": "short concluding interpretation"
         }
 
         Rules:
         - Base insights only on the provided responses, canonical themes, sentiment, and confidence.
+        - Positive highlights should reflect strengths customers or respondents mention.
+        - Negative highlights should reflect pain points or dissatisfaction.
+        - Key risks should be framed as management risks, not generic complaints.
         - Recommended actions should be practical, specific, and derived from the patterns in the data.
         - Avoid overstating certainty when the sample is small.
         - Keep the executive summary brief.
@@ -636,5 +660,9 @@ def build_overall_results(payload: OpenAIAnalysisPayload) -> OverallResults:
             "negative": sentiment_counts.get("negative", 0),
         },
         executive_summary=payload.executive_summary,
+        positive_highlights=payload.positive_highlights,
+        negative_highlights=payload.negative_highlights,
+        key_risks=payload.key_risks,
         recommended_actions=payload.recommended_actions,
+        ai_generated_conclusions=payload.ai_generated_conclusions,
     )

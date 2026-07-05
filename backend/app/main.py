@@ -19,15 +19,18 @@ from .analysis import (
     clean_feedback_values,
 )
 from .file_store import (
+    REPORT_DIR,
     RESULT_DIR,
     dataframe_preview,
     ensure_storage,
     new_upload_id,
     read_table,
+    report_path,
     result_path,
     save_upload,
     upload_path,
 )
+from .reporting import generate_management_report_pdf
 
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -111,6 +114,18 @@ def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
     result_df = pd.DataFrame([item.model_dump() for item in payload.results])
     output_path = RESULT_DIR / f"{analysis_id}.csv"
     result_df.to_csv(output_path, index=False)
+    report_output_path = REPORT_DIR / f"{analysis_id}.pdf"
+    try:
+        generate_management_report_pdf(
+            report_output_path,
+            analysis_id=analysis_id,
+            results=payload.results,
+            overall=overall,
+        )
+    except Exception as exc:
+        logger.exception("Management report generation failed", extra={"analysis_id": analysis_id})
+        raise HTTPException(status_code=500, detail=f"Management report generation failed: {exc}") from exc
+
     logger.info(
         "Feedback analysis completed",
         extra={
@@ -125,6 +140,7 @@ def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
         results=payload.results,
         overall=overall,
         download_url=f"/download/{analysis_id}",
+        report_download_url=f"/download-report/{analysis_id}",
     )
 
 
@@ -135,4 +151,14 @@ def download_analysis(analysis_id: str) -> FileResponse:
         path,
         media_type="text/csv",
         filename=f"analysed-feedback-{analysis_id}.csv",
+    )
+
+
+@app.get("/download-report/{analysis_id}")
+def download_management_report(analysis_id: str) -> FileResponse:
+    path = report_path(analysis_id)
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename=f"management-report-{analysis_id}.pdf",
     )
