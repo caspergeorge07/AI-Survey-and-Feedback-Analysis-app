@@ -39,6 +39,11 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Added
 
+- Sprint 8 Executive Dashboard as the primary application landing experience.
+- Dashboard welcome section with action links into the existing analysis workflow.
+- KPI summary cards for total projects, analyses completed, responses analysed, and average positive sentiment.
+- Recent Analyses table, Recent Reports section, Top Themes visualisation, Sentiment visualisation, Recommended Actions summary, Recent Activity feed, and Quick Actions panel using mock/demo data.
+- Responsive dashboard layout for desktop, tablet, and mobile without backend API changes.
 - Sprint 7 Dataset Intelligence Upload Wizard.
 - Step-based wizard progress for Upload, Dataset Profile, Column Selection, Analysis Options, Review, and Run Analysis.
 - Premium drag-and-drop upload experience with browse fallback, supported format guidance, maximum file size guidance, and sample dataset download.
@@ -68,6 +73,7 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Changed
 
+- Dashboard is now the active landing page while the existing Dataset Intelligence Wizard remains available on the same page under the Analysis section.
 - Replaced the previous single-panel upload experience with the Dataset Intelligence Wizard while preserving the existing backend API contract.
 - Frontend analysis now sends selected qualitative columns through the existing `feedback_columns` request field.
 - Existing local MVP upload, preview, analysis, results, CSV, and PDF workflow now sits inside the permanent SurveyIQ application shell.
@@ -111,12 +117,12 @@ The changelog is written for internal product and engineering history. Customer-
 | Sprint 5 | Dataset-level feedback intelligence, including column profiling, multiple qualitative columns, quantitative summaries, segment detection, cross-analysis, enhanced executive summary, PDF report updates, and mixed survey test dataset | Completed |
 | Sprint 6 | Frontend foundation and application shell | Completed |
 | Sprint 7 | Dataset Intelligence Upload Wizard exposing upload, dataset profiling, column intelligence, analysis options, review, processing, and results flow | Completed |
+| Sprint 8 | Executive Dashboard with KPI cards, recent analyses, reports, top themes, sentiment, recommended actions, activity, and quick actions | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 8: Executive dashboard | Create first dashboard experience. | Empty dashboard, returning dashboard, summary cards, recent work areas. | Sprint 6 and Sprint 7, existing outputs. | Empty and returning-user dashboard states are usable. | Empty/populated state tests, UI regression. |
 | Sprint 9: Results dashboard and interactive charts | Improve results presentation. | Executive summary layout, theme/sentiment charts, quantitative and segment panels. | Sprint 8, Sprint 5 dataset fields. | Results dashboard preserves CSV/PDF downloads. | Chart accessibility, single/multi-column compatibility. |
 | Sprint 10: Reports and PDF builder UI | Add UI for report workflow. | Reports entry, builder UI, PDF preview/download controls. | Sprint 9, PDF endpoint. | Users can access and download reports from UI. | PDF download regression, report UI smoke tests. |
 | Sprint 11: AI Assistant interface | Add contextual assistant drawer. | Drawer UI, prompt input, suggestions, context display, states. | Sprint 6, Sprint 9 context. | Assistant drawer works without disrupting core workflow. | Drawer, focus, keyboard, and context-boundary tests. |
@@ -340,3 +346,4 @@ The changelog is written for internal product and engineering history. Customer-
 | 1.3 | 2026-07-05 | Codex | Recorded Sprint 7 Dataset Intelligence Upload Wizard completion and updated immediate sprint sequencing. |
 | 1.4 | 2026-07-05 | Codex | Recorded Sprint 7 bug fix for Dataset Intelligence Wizard qualitative column preselection and fallback profile mapping. |
 | 1.5 | 2026-07-05 | Codex | Recorded Sprint 7 bug fix for readable wizard API error messages and safe structured error handling. |
+| 1.6 | 2026-07-05 | Codex | Recorded Sprint 8 Executive Dashboard completion and dashboard regression coverage. |

@@ -29,6 +29,7 @@ For internal engineering history, use [13_Change_Log.md](13_Change_Log.md).
 | Version | Release Name | Status | Summary |
 |---|---|---|---|
 | 1.0 | Documentation Library Version 1 | Draft | Complete professional documentation set for product, engineering, AI, API, brand, testing, and operations. |
+| 0.7 | Executive Dashboard | Draft | Added the primary dashboard landing experience with KPIs, recent work, themes, sentiment, actions, activity, and quick actions. |
 | 0.6 | Dataset Intelligence Upload Wizard | Draft | Replaced the simple upload flow with a guided wizard for upload, profiling, column intelligence, options, review, processing, and results. |
 | 0.5 | Frontend Foundation | Draft | Added the permanent SurveyIQ application shell, responsive navigation, top bar, and shared UI components. |
 | 0.4 | Management Report MVP | Draft | Added professional PDF management report generation. |
@@ -47,6 +48,22 @@ SurveyIQ MVP helps users upload survey feedback files, preview their data, selec
 The MVP is designed for local validation of the core workflow, not production multi-user SaaS deployment.
 
 ## 3. Major Features
+
+### Executive Dashboard
+
+SurveyIQ now opens to an executive dashboard designed for fast review of feedback intelligence activity. The dashboard includes:
+
+- Welcome section.
+- KPI summary cards.
+- Recent analyses.
+- Recent reports.
+- Top themes visualisation.
+- Sentiment visualisation.
+- Recommended actions.
+- Recent activity.
+- Quick actions.
+
+The dashboard currently uses realistic demo data while preserving compatibility with future backend integration and the existing upload-to-report workflow.
 
 ### Dataset Intelligence Upload Wizard
 
@@ -152,6 +169,8 @@ SurveyIQ can generate a management-ready PDF report with:
 - Added a visible PDF report download action when a PDF report is available.
 - Added a premium upload dropzone with browse fallback, sample dataset download, and supported file guidance.
 - Added review and processing screens that make the current analysis state clearer without pretending live backend progress exists.
+- Added an executive dashboard landing experience that keeps the Dataset Intelligence Wizard available from the same application surface.
+- Added responsive dashboard layouts for desktop, tablet, and mobile.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
 
@@ -180,7 +199,8 @@ Current MVP limitations:
 - No team collaboration.
 - No enterprise governance.
 - Larger analyses can still take several minutes.
-- Dashboard, Projects, Reports, AI Assistant, Settings, and other application pages are not yet built; the wizard redirects to the current results view until the Sprint 8 dashboard exists.
+- Projects, full report library, AI Assistant, Settings, and other application pages are not yet fully built.
+- Dashboard content currently uses realistic demo data until database-backed projects, analyses, and reports are introduced.
 - Analysis option toggles are frontend workflow controls in the local MVP; the backend still generates the currently supported analysis outputs.
 - AI results should be reviewed for important business decisions, especially low-confidence responses.
 - Cross-analysis is intentionally lightweight in the MVP and should be treated as directional.
@@ -192,13 +212,12 @@ See [14_Known_Issues.md](14_Known_Issues.md) for the full known issues register.
 
 Planned or future capabilities:
 
-- Executive dashboard.
 - Project organization.
 - Reports library.
 - Authentication and onboarding.
 - Workspace settings.
 - Usage tracking.
-- Dashboard summaries.
+- Backend-connected dashboard summaries.
 - Theme review and sentiment review.
 - Richer frontend exposure of column profiles, quantitative summaries, and cross-analysis.
 - AI Assistant as a right-side contextual drawer.
@@ -224,3 +243,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 | 1.1 | 2026-07-05 | Codex | Added release notes for dataset-level feedback intelligence and multi-column analysis. |
 | 1.2 | 2026-07-05 | Codex | Added Sprint 6 frontend foundation release notes for the permanent SurveyIQ application shell. |
 | 1.3 | 2026-07-05 | Codex | Added Sprint 7 release notes for the Dataset Intelligence Upload Wizard. |
+| 1.4 | 2026-07-05 | Codex | Added Sprint 8 release notes for the Executive Dashboard landing experience. |

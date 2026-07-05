@@ -294,7 +294,7 @@ Recommended automation roadmap:
 | Test Case | Steps | Expected Result |
 |---|---|---|
 | Render desktop shell | Open the frontend on a desktop viewport. | Permanent sidebar, topbar, content area, and current MVP workflow render without overlap. |
-| Verify primary navigation | Inspect sidebar items. | Dashboard, Projects, Analysis, Reports, AI Assistant, Data Sources, Team, and Settings are visible and Analysis is active for the current MVP page. |
+| Verify primary navigation | Inspect sidebar items. | Dashboard, Projects, Analysis, Reports, AI Assistant, Data Sources, Team, and Settings are visible and Dashboard is active on the primary landing page. |
 | Tablet collapsed navigation | Resize to tablet width. | Sidebar uses compact/collapsed presentation and content remains readable. |
 | Mobile drawer navigation | Resize to mobile width and open navigation. | Drawer opens, navigation items are reachable, and drawer can be closed. |
 | Topbar controls | Inspect workspace, search, notifications, help, theme toggle, and avatar. | Controls render consistently and do not alter backend behaviour. |
@@ -322,7 +322,7 @@ Recommended automation roadmap:
 | Review setup | Continue to Review. | Selected qualitative, segment, rating columns, report outputs, estimated responses, estimated OpenAI calls, and estimated time are visible. |
 | Start analysis | Start from Review with at least one qualitative column. | Wizard enters Processing and submits existing `feedback_columns` request to backend. |
 | Processing state | Run analysis. | UI states that live backend progress is unavailable and does not fake exact progress. |
-| Results redirect | Analysis completes. | User is shown the current Results view until Sprint 8 dashboard exists. |
+| Results redirect | Analysis completes. | User is shown the current Results view in the wizard without disrupting the dashboard landing experience. |
 | CSV/PDF links | Complete analysis with export options enabled. | Analysed CSV and PDF report links are available. |
 | No qualitative column | Disable all feedback columns and try to continue/start. | Validation prevents analysis and explains that at least one qualitative feedback column is required. |
 | Structured API errors | Simulate upload or analysis errors using `{ detail: "message" }`, `{ detail: [{ msg: "...", loc: [...] }] }`, `{ error: { message: "..." } }`, and plain text payloads. | User sees readable, safe messages; `[object Object]`, stack traces, internal paths, and secrets are never displayed. |
@@ -435,6 +435,14 @@ Recommended automation roadmap:
 
 | Test Case | Steps | Expected Result |
 |---|---|---|
+| Executive dashboard renders | Open the application landing page. | Dashboard appears before the analysis wizard and includes welcome, KPIs, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, and quick actions. |
+| KPI cards | Inspect dashboard KPI area. | Total Projects, Analyses Completed, Responses Analysed, and Average Positive Sentiment cards are visible and readable. |
+| Recent analyses table | Inspect Recent Analyses. | Table shows analysis name, project, responses, sentiment, status, and date. |
+| Recent reports section | Inspect Recent Reports. | Report summaries and status badges are visible. |
+| Theme visualisation | Inspect Top Themes. | Theme bars render with text labels and counts. |
+| Sentiment visualisation | Inspect Sentiment. | Sentiment donut and text legend render with positive, neutral, and negative values. |
+| Quick action to analysis | Select Start new analysis. | User moves to the existing Dataset Intelligence Wizard section without changing backend behaviour. |
+| Dashboard responsive layout | Check desktop, tablet, and mobile viewports. | Dashboard remains readable, stacks appropriately, and avoids page-level horizontal overflow. |
 | Empty dashboard | Open dashboard with no saved data in future SaaS flow. | Action-first empty state appears. |
 | Returning dashboard | Open dashboard with saved analyses in future SaaS flow. | Insight-first summary and recent work appear. |
 
@@ -515,6 +523,7 @@ Before a release:
 - Backend build or compile check passes.
 - Sprint 6 shell regression passes on desktop, tablet, and mobile viewports.
 - Sidebar collapse and mobile drawer navigation are verified.
+- Sprint 8 dashboard regression passes for KPI cards, recent analyses, recent reports, top themes, sentiment, recommended actions, activity, quick actions, and responsive layout.
 - Sprint 7 wizard regression passes across upload, profile, column intelligence, options, review, processing, and results.
 - Column intelligence exposes backend profiling fields without requiring backend behaviour changes.
 - Structured wizard API errors render as readable user-facing text and never as `[object Object]`.
@@ -539,3 +548,4 @@ Before a release:
 | 1.2 | 2026-07-05 | Codex | Added Sprint 7 Dataset Intelligence Upload Wizard test cases and release readiness checks. |
 | 1.3 | 2026-07-05 | Codex | Added regression tests for qualitative column preselection and incomplete profile fallback mapping. |
 | 1.4 | 2026-07-05 | Codex | Added regression tests for readable structured API error handling in the Dataset Intelligence Wizard. |
+| 1.5 | 2026-07-05 | Codex | Added Sprint 8 Executive Dashboard test cases and release readiness checks. |
