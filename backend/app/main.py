@@ -10,13 +10,21 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .analysis import (
     AnalysisResult,
     analyse_feedback_with_openai,
     build_overall_results,
-    clean_feedback_values,
+)
+from .dataset_intelligence import (
+    ColumnProfile,
+    build_cross_analysis,
+    build_enhanced_executive_summary,
+    build_quantitative_summary,
+    build_segment_summary,
+    clean_feedback_entries,
+    profile_dataframe_columns,
 )
 from .file_store import (
     REPORT_DIR,
@@ -67,11 +75,13 @@ class UploadResponse(BaseModel):
     columns: list[str]
     preview: list[dict]
     row_count: int
+    column_profiles: list[ColumnProfile] = Field(default_factory=list)
 
 
 class AnalyseRequest(BaseModel):
     upload_id: str
-    feedback_column: str
+    feedback_column: str | None = None
+    feedback_columns: list[str] | None = None
 
 
 @app.get("/health")
@@ -88,6 +98,7 @@ async def upload_file(file: UploadFile = File(...)) -> UploadResponse:
         "Uploaded file parsed",
         extra={"upload_id": upload_id, "rows": len(df), "columns": len(df.columns)},
     )
+    column_profiles = profile_dataframe_columns(df)
 
     return UploadResponse(
         upload_id=upload_id,
@@ -95,6 +106,7 @@ async def upload_file(file: UploadFile = File(...)) -> UploadResponse:
         columns=[str(column) for column in df.columns],
         preview=dataframe_preview(df),
         row_count=len(df),
+        column_profiles=column_profiles,
     )
 
 
@@ -102,13 +114,32 @@ async def upload_file(file: UploadFile = File(...)) -> UploadResponse:
 def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
     path = upload_path(request.upload_id)
     df = read_table(path)
+    column_profiles = profile_dataframe_columns(df)
+    selected_feedback_columns = _selected_feedback_columns(request, df)
 
-    if request.feedback_column not in df.columns:
-        raise HTTPException(status_code=400, detail="Selected feedback column was not found.")
-
-    feedback_values = clean_feedback_values(df[request.feedback_column])
+    feedback_entries = clean_feedback_entries(df, selected_feedback_columns)
+    feedback_values = [entry.original_response for entry in feedback_entries]
     payload = analyse_feedback_with_openai(feedback_values)
+    for item, entry in zip(payload.results, feedback_entries, strict=True):
+        item.source_row_index = entry.source_row_index
+        item.source_feedback_column = entry.source_feedback_column
+
     overall = build_overall_results(payload)
+    quantitative_summary = build_quantitative_summary(df, column_profiles)
+    segment_summary = build_segment_summary(df, column_profiles)
+    cross_analysis = build_cross_analysis(
+        df,
+        column_profiles,
+        payload.results,
+        quantitative_summary,
+    )
+    enhanced_executive_summary = build_enhanced_executive_summary(
+        base_summary=overall.executive_summary,
+        quantitative_summary=quantitative_summary,
+        segment_summary=segment_summary,
+        cross_analysis=cross_analysis,
+    )
+    overall.executive_summary = enhanced_executive_summary
 
     analysis_id = uuid.uuid4().hex
     result_df = pd.DataFrame([item.model_dump() for item in payload.results])
@@ -121,6 +152,13 @@ def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
             analysis_id=analysis_id,
             results=payload.results,
             overall=overall,
+            row_count=len(df),
+            selected_feedback_columns=selected_feedback_columns,
+            column_profiles=column_profiles,
+            quantitative_summary=quantitative_summary,
+            segment_summary=segment_summary,
+            cross_analysis=cross_analysis,
+            enhanced_executive_summary=enhanced_executive_summary,
         )
     except Exception as exc:
         logger.exception("Management report generation failed", extra={"analysis_id": analysis_id})
@@ -132,6 +170,7 @@ def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
             "upload_id": request.upload_id,
             "analysis_id": analysis_id,
             "responses": len(payload.results),
+            "feedback_columns": len(selected_feedback_columns),
         },
     )
 
@@ -141,6 +180,12 @@ def analyse_feedback(request: AnalyseRequest) -> AnalysisResult:
         overall=overall,
         download_url=f"/download/{analysis_id}",
         report_download_url=f"/download-report/{analysis_id}",
+        column_profiles=column_profiles,
+        selected_feedback_columns=selected_feedback_columns,
+        quantitative_summary=quantitative_summary,
+        segment_summary=segment_summary,
+        cross_analysis=cross_analysis,
+        enhanced_executive_summary=enhanced_executive_summary,
     )
 
 
@@ -162,3 +207,21 @@ def download_management_report(analysis_id: str) -> FileResponse:
         media_type="application/pdf",
         filename=f"management-report-{analysis_id}.pdf",
     )
+
+
+def _selected_feedback_columns(request: AnalyseRequest, df: pd.DataFrame) -> list[str]:
+    requested_columns = request.feedback_columns or (
+        [request.feedback_column] if request.feedback_column else []
+    )
+    selected: list[str] = []
+    for column in requested_columns:
+        if not column:
+            continue
+        if column not in df.columns:
+            raise HTTPException(status_code=400, detail=f"Selected feedback column was not found: {column}")
+        if column not in selected:
+            selected.append(column)
+
+    if not selected:
+        raise HTTPException(status_code=400, detail="Select at least one feedback column before analysing feedback.")
+    return selected

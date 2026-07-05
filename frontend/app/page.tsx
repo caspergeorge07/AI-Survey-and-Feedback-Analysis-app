@@ -1,6 +1,13 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import {
+  AppLayout,
+  ContentArea,
+  PageHeader,
+  SectionHeader,
+} from "./components/shell";
+import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from "./components/ui";
 
 type PreviewRow = Record<string, string | number | boolean | null>;
 
@@ -30,6 +37,7 @@ type AnalysisResult = {
     executive_summary: string;
   };
   download_url: string;
+  report_download_url?: string | null;
 };
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
@@ -139,59 +147,55 @@ export default function Home() {
   }
 
   return (
-    <main className="shell">
-      <section className="workspace">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">Local MVP</p>
-            <h1>AI Survey Feedback Analysis</h1>
-          </div>
-          <a className="download-link subtle" href={`${API_BASE_URL}/health`} target="_blank">
-            API health
-          </a>
-        </header>
+    <AppLayout activeItem="Analysis">
+      <ContentArea>
+        <PageHeader
+          actions={
+            <a className="download-link subtle" href={`${API_BASE_URL}/health`} target="_blank">
+              API health
+            </a>
+          }
+          description="Upload survey data, preview columns, analyse free-text feedback, and export executive-ready outputs."
+          eyebrow="Local MVP"
+          title="AI Survey Feedback Analysis"
+        />
 
-        <section className="panel">
+        <Card>
           <form onSubmit={handleUpload} className="upload-row">
             <label className="file-picker">
               <span>CSV or Excel file</span>
               <input accept=".csv,.xls,.xlsx" type="file" onChange={handleFileChange} />
             </label>
-            <button type="submit" disabled={isUploading}>
+            <Button type="submit" disabled={isUploading}>
               {isUploading ? "Uploading..." : "Upload and preview"}
-            </button>
+            </Button>
           </form>
           {file ? <p className="muted">Selected: {file.name}</p> : null}
-          {error ? <p className="error">{error}</p> : null}
-        </section>
+          {error ? <ErrorState message={error} /> : null}
+        </Card>
 
         {upload ? (
           <>
             <section className="grid two">
-              <div className="panel">
-                <div className="section-heading">
-                  <h2>Detected Columns</h2>
-                  <span>{upload.columns.length} columns</span>
-                </div>
+              <Card>
+                <SectionHeader detail={`${upload.columns.length} columns`} title="Detected Columns" />
                 <div className="column-list">
                   {upload.columns.map((column) => (
-                    <button
+                    <Button
                       className={selectedColumn === column ? "column active" : "column"}
                       key={column}
                       type="button"
+                      variant="secondary"
                       onClick={() => setSelectedColumn(column)}
                     >
                       {column}
-                    </button>
+                    </Button>
                   ))}
                 </div>
-              </div>
+              </Card>
 
-              <div className="panel">
-                <div className="section-heading">
-                  <h2>Feedback Column</h2>
-                  <span>{upload.row_count} rows</span>
-                </div>
+              <Card>
+                <SectionHeader detail={`${upload.row_count} rows`} title="Feedback Column" />
                 <select
                   value={selectedColumn}
                   onChange={(event) => setSelectedColumn(event.target.value)}
@@ -202,17 +206,15 @@ export default function Home() {
                     </option>
                   ))}
                 </select>
-                <button className="analyse-button" type="button" onClick={handleAnalyse} disabled={isAnalysing}>
+                <Button className="analyse-button" type="button" onClick={handleAnalyse} disabled={isAnalysing}>
                   {isAnalysing ? "Analysing..." : "Analyse feedback"}
-                </button>
-              </div>
+                </Button>
+                {isAnalysing ? <LoadingState label="Analysing feedback" /> : null}
+              </Card>
             </section>
 
-            <section className="panel">
-              <div className="section-heading">
-                <h2>Preview</h2>
-                <span>First 10 rows from {upload.filename}</span>
-              </div>
+            <Card>
+              <SectionHeader detail={`First 10 rows from ${upload.filename}`} title="Preview" />
               <div className="table-wrap">
                 <table>
                   <thead>
@@ -233,50 +235,63 @@ export default function Home() {
                   </tbody>
                 </table>
               </div>
-            </section>
+            </Card>
           </>
-        ) : null}
+        ) : (
+          <EmptyState
+            description="Choose a CSV or Excel file to inspect the first 10 rows and select a feedback column."
+            title="No dataset uploaded yet"
+          />
+        )}
 
         {analysis ? (
           <section className="results">
-            <div className="panel">
-              <div className="section-heading">
-                <h2>Overall Results</h2>
-                <a className="download-link" href={`${API_BASE_URL}${analysis.download_url}`}>
-                  Download analysed CSV
-                </a>
-              </div>
+            <Card>
+              <SectionHeader
+                actions={
+                  <div className="download-actions">
+                    <a className="download-link" href={`${API_BASE_URL}${analysis.download_url}`}>
+                      Download analysed CSV
+                    </a>
+                    {analysis.report_download_url ? (
+                      <a className="download-link subtle" href={`${API_BASE_URL}${analysis.report_download_url}`}>
+                        Download PDF report
+                      </a>
+                    ) : null}
+                  </div>
+                }
+                title="Overall Results"
+              />
               <p>{analysis.overall.executive_summary}</p>
               <p className="muted">{analysis.overall.summary_of_main_themes}</p>
               <div className="grid two">
                 <CountList title="Themes" counts={analysis.overall.counts_by_theme} />
                 <CountList title="Sentiment" counts={analysis.overall.counts_by_sentiment} />
               </div>
-            </div>
+            </Card>
 
-            <section className="panel">
-              <div className="section-heading">
-                <h2>Analysed Responses</h2>
-                <span>{analysis.results.length} responses</span>
-              </div>
+            <Card>
+              <SectionHeader detail={`${analysis.results.length} responses`} title="Analysed Responses" />
               <div className="response-list">
                 {analysis.results.map((item, index) => (
                   <article className="response-card" key={`${item.original_response}-${index}`}>
                     <div className="response-meta">
-                      <span>{item.theme}</span>
-                      <span className={`sentiment ${item.sentiment}`}>{item.sentiment}</span>
-                      <span>{Math.round(item.confidence * 100)}% confidence</span>
+                      <Badge tone="ai">{item.theme}</Badge>
+                      <Badge className={`sentiment ${item.sentiment}`} tone={sentimentTone(item.sentiment)}>
+                        {item.sentiment}
+                      </Badge>
+                      <Badge>{Math.round(item.confidence * 100)}% confidence</Badge>
                     </div>
                     <p>{item.original_response}</p>
                     <p className="muted">{item.reason}</p>
                   </article>
                 ))}
               </div>
-            </section>
+            </Card>
           </section>
         ) : null}
-      </section>
-    </main>
+      </ContentArea>
+    </AppLayout>
   );
 }
 
@@ -292,4 +307,14 @@ function CountList({ title, counts }: { title: string; counts: Record<string, nu
       ))}
     </div>
   );
+}
+
+function sentimentTone(sentiment: AnalysedResponse["sentiment"]) {
+  if (sentiment === "positive") {
+    return "success";
+  }
+  if (sentiment === "negative") {
+    return "danger";
+  }
+  return "warning";
 }

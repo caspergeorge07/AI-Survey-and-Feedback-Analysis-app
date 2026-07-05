@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Survey Feedback Analysis",
-  description: "Local MVP for analysing survey feedback with AI"
+  title: "SurveyIQ",
+  description: "AI-powered survey and qualitative feedback intelligence"
 };
 
 export default function RootLayout({

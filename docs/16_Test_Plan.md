@@ -180,6 +180,12 @@ API testing standards:
 
 UI tests should validate:
 
+- Permanent application shell renders.
+- Sidebar navigation renders all approved primary navigation items.
+- Sidebar collapses on tablet-sized layouts.
+- Mobile drawer opens and closes.
+- Top bar controls render without blocking core workflow.
+- Theme toggle changes shell theme state.
 - Upload controls.
 - Browse fallback for drag-and-drop.
 - Preview table readability.
@@ -279,6 +285,19 @@ Recommended automation roadmap:
 | Upload unsupported file | Select unsupported file type. | User receives clear unsupported file error. |
 | Upload empty CSV | Upload empty CSV file. | User receives clear empty/unreadable file error. |
 | Upload CSV with unusual characters | Upload CSV containing punctuation, unicode, and line breaks. | File parses without corrupting preview. |
+
+### Frontend Application Shell
+
+| Test Case | Steps | Expected Result |
+|---|---|---|
+| Render desktop shell | Open the frontend on a desktop viewport. | Permanent sidebar, topbar, content area, and current MVP workflow render without overlap. |
+| Verify primary navigation | Inspect sidebar items. | Dashboard, Projects, Analysis, Reports, AI Assistant, Data Sources, Team, and Settings are visible and Analysis is active for the current MVP page. |
+| Tablet collapsed navigation | Resize to tablet width. | Sidebar uses compact/collapsed presentation and content remains readable. |
+| Mobile drawer navigation | Resize to mobile width and open navigation. | Drawer opens, navigation items are reachable, and drawer can be closed. |
+| Topbar controls | Inspect workspace, search, notifications, help, theme toggle, and avatar. | Controls render consistently and do not alter backend behaviour. |
+| Theme toggle | Toggle theme control. | Shell switches between light and dark presentation without losing page state. |
+| Shared state components | Trigger empty, loading, and error states. | Empty, loading, and error components are readable, accessible, and visually consistent. |
+| Existing workflow inside shell | Upload and analyse a sample file from inside the shell. | Upload, preview, analysis, counts, CSV download, and PDF download continue to work. |
 
 ### Upload Excel
 
@@ -464,6 +483,10 @@ Before a release:
 - Sample data and larger dataset tests pass.
 - Mixed 100-row dataset test passes.
 - Old single-column request and new multi-column request both pass.
+- Frontend build passes.
+- Backend build or compile check passes.
+- Sprint 6 shell regression passes on desktop, tablet, and mobile viewports.
+- Sidebar collapse and mobile drawer navigation are verified.
 
 ## 16. Related Documents
 

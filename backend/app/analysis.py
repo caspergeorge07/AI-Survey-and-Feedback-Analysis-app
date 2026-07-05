@@ -14,12 +14,19 @@ from fastapi import HTTPException
 from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
+from .dataset_intelligence import (
+    ColumnProfile,
+    CrossAnalysis,
+    QuantitativeColumnSummary,
+    SegmentColumnSummary,
+)
+
 
 Sentiment = Literal["positive", "neutral", "negative"]
 logger = logging.getLogger(__name__)
 DEFAULT_BATCH_SIZE = 50
 MIN_BATCH_SIZE = 1
-MAX_BATCH_SIZE = 100
+MAX_BATCH_SIZE = 200
 
 
 class AnalysedResponse(BaseModel):
@@ -28,6 +35,8 @@ class AnalysedResponse(BaseModel):
     sentiment: Sentiment
     confidence: float = Field(ge=0, le=1)
     reason: str
+    source_row_index: int | None = None
+    source_feedback_column: str | None = None
 
 
 class IndividualResponseAnalysis(BaseModel):
@@ -109,6 +118,12 @@ class AnalysisResult(BaseModel):
     overall: OverallResults
     download_url: str
     report_download_url: str | None = None
+    column_profiles: list[ColumnProfile] = Field(default_factory=list)
+    selected_feedback_columns: list[str] = Field(default_factory=list)
+    quantitative_summary: dict[str, QuantitativeColumnSummary] = Field(default_factory=dict)
+    segment_summary: dict[str, SegmentColumnSummary] = Field(default_factory=dict)
+    cross_analysis: CrossAnalysis | None = None
+    enhanced_executive_summary: str | None = None
 
 
 PayloadT = TypeVar("PayloadT", bound=BaseModel)

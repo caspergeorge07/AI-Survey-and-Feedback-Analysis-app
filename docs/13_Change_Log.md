@@ -39,6 +39,12 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Added
 
+- Sprint 6 frontend foundation and permanent application shell.
+- Reusable frontend layout components: `AppLayout`, `Sidebar`, `Topbar`, `ContentArea`, `PageHeader`, and `SectionHeader`.
+- Reusable frontend UI primitives: `Card`, `Button`, `Badge`, `LoadingState`, `EmptyState`, and `ErrorState`.
+- Microsoft-inspired enterprise SaaS layout with desktop sidebar, tablet collapsed sidebar, and mobile drawer navigation.
+- Top navigation shell with workspace name, search UI, notifications control, help control, theme toggle, and user avatar placeholder.
+- Frontend PDF report download link when the backend returns `report_download_url`.
 - Column profiling for every uploaded CSV/Excel column.
 - Additive upload response field: `column_profiles`.
 - Optional multi-column qualitative analysis through `feedback_columns`.
@@ -52,6 +58,7 @@ The changelog is written for internal product and engineering history. Customer-
 
 ### Changed
 
+- Existing local MVP upload, preview, analysis, results, CSV, and PDF workflow now sits inside the permanent SurveyIQ application shell.
 - Enhanced executive summary now combines qualitative themes with available quantitative and segment context.
 - Analysed CSV export now includes source row and source feedback column metadata.
 - PDF reports include dataset intelligence sections only when relevant data exists.
@@ -87,12 +94,12 @@ The changelog is written for internal product and engineering history. Customer-
 | Sprint 3 | OpenAI analysis and CSV export | Completed |
 | Sprint 4 | Multi-stage AI analysis pipeline | Completed |
 | Sprint 5 | Dataset-level feedback intelligence, including column profiling, multiple qualitative columns, quantitative summaries, segment detection, cross-analysis, enhanced executive summary, PDF report updates, and mixed survey test dataset | Completed |
+| Sprint 6 | Frontend foundation and application shell | Completed |
 
 ### Upcoming Sprints
 
 | Sprint | Objective | Key Deliverables | Dependencies | Definition of Done | Testing Required |
 |---|---|---|---|---|---|
-| Sprint 6: Frontend foundation and application shell | Establish frontend layout foundation. | App shell, sidebar, top bar, responsive layout, common states. | Wireframes, design system, current frontend. | Existing MVP flow works inside the SurveyIQ shell. | Frontend build, responsive checks, MVP regression. |
 | Sprint 7: Executive dashboard | Create first dashboard experience. | Empty dashboard, returning dashboard, summary cards, recent work areas. | Sprint 6, existing outputs. | Empty and returning-user dashboard states are usable. | Empty/populated state tests, UI regression. |
 | Sprint 8: Projects and analysis wizard | Organize the current flow into a guided wizard. | New Analysis, upload, preview, configure, processing, results transition. | Sprint 6, current APIs. | Upload-to-results flow works through the wizard. | Wizard regression, validation, error-state tests. |
 | Sprint 9: Results dashboard and interactive charts | Improve results presentation. | Executive summary layout, theme/sentiment charts, quantitative and segment panels. | Sprint 8, Sprint 5 dataset fields. | Results dashboard preserves CSV/PDF downloads. | Chart accessibility, single/multi-column compatibility. |
@@ -314,3 +321,4 @@ The changelog is written for internal product and engineering history. Customer-
 | 0.1 | TBD | TBD | Initial starter changelog. |
 | 1.0 | 2026-07-05 | Codex | Migrated and rewrote changelog using Keep a Changelog structure with major SurveyIQ milestones. |
 | 1.1 | 2026-07-05 | Codex | Added agreed Sprint 1-15 plan with completed sprint history and upcoming sprint sequence. |
+| 1.2 | 2026-07-05 | Codex | Recorded Sprint 6 frontend foundation, reusable shell components, responsive navigation, and MVP shell integration. |

@@ -19,6 +19,12 @@ from reportlab.platypus import (
 )
 
 from .analysis import AnalysedResponse, OverallResults
+from .dataset_intelligence import (
+    ColumnProfile,
+    CrossAnalysis,
+    QuantitativeColumnSummary,
+    SegmentColumnSummary,
+)
 
 
 BRAND = colors.HexColor("#186A83")
@@ -37,6 +43,13 @@ def generate_management_report_pdf(
     analysis_id: str,
     results: list[AnalysedResponse],
     overall: OverallResults,
+    row_count: int | None = None,
+    selected_feedback_columns: list[str] | None = None,
+    column_profiles: list[ColumnProfile] | None = None,
+    quantitative_summary: dict[str, QuantitativeColumnSummary] | None = None,
+    segment_summary: dict[str, SegmentColumnSummary] | None = None,
+    cross_analysis: CrossAnalysis | None = None,
+    enhanced_executive_summary: str | None = None,
 ) -> Path:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -60,12 +73,40 @@ def generate_management_report_pdf(
             Paragraph(f"Analysis ID: {analysis_id}", styles["MutedCentered"]),
             Paragraph(f"Generated: {generated_at}", styles["MutedCentered"]),
             Spacer(1, 0.22 * inch),
-            _metric_table(results, overall),
+            _metric_table(results, overall, row_count=row_count, selected_feedback_columns=selected_feedback_columns),
             Spacer(1, 0.18 * inch),
         ]
     )
 
-    _add_section(story, styles, "1. Executive Summary", [overall.executive_summary])
+    if row_count is not None or selected_feedback_columns:
+        _add_section(
+            story,
+            styles,
+            "Dataset Overview",
+            _dataset_overview_lines(row_count, selected_feedback_columns, results),
+        )
+    if column_profiles:
+        story.extend(
+            [
+                Paragraph("Column Profile Summary", styles["Heading2"]),
+                _column_profile_table(column_profiles),
+                Spacer(1, 0.14 * inch),
+            ]
+        )
+    if quantitative_summary:
+        story.extend(
+            [
+                Paragraph("Quantitative Summary", styles["Heading2"]),
+                _quantitative_summary_table(quantitative_summary),
+                Spacer(1, 0.14 * inch),
+            ]
+        )
+    if segment_summary:
+        _add_section(story, styles, "Segment Insights", _segment_summary_lines(segment_summary))
+    if cross_analysis and _has_cross_analysis(cross_analysis):
+        _add_section(story, styles, "Cross-Analysis Highlights", _cross_analysis_lines(cross_analysis))
+
+    _add_section(story, styles, "1. Executive Summary", [enhanced_executive_summary or overall.executive_summary])
     _add_section(
         story,
         styles,
@@ -201,9 +242,17 @@ def _add_section(story: list, styles: dict[str, ParagraphStyle], title: str, lin
         story.append(Paragraph(_escape(line), styles["Bullet"], bulletText="-"))
 
 
-def _metric_table(results: list[AnalysedResponse], overall: OverallResults) -> Table:
+def _metric_table(
+    results: list[AnalysedResponse],
+    overall: OverallResults,
+    *,
+    row_count: int | None,
+    selected_feedback_columns: list[str] | None,
+) -> Table:
     rows = [
+        ["Dataset rows", str(row_count) if row_count is not None else "Not provided"],
         ["Responses", str(len(results))],
+        ["Feedback columns", str(len(selected_feedback_columns or []))],
         ["Themes", str(len(overall.counts_by_theme))],
         ["Positive", str(overall.counts_by_sentiment.get("positive", 0))],
         ["Neutral", str(overall.counts_by_sentiment.get("neutral", 0))],
@@ -255,6 +304,107 @@ def _bar_chart_table(counts: dict[str, int], label_heading: str, color_source) -
         )
     )
     return table
+
+
+def _column_profile_table(profiles: list[ColumnProfile]) -> Table:
+    rows = [["Column", "Type", "Role", "Non-empty", "Missing", "Unique"]]
+    for profile in profiles[:12]:
+        rows.append(
+            [
+                _shorten(profile.column_name, 24),
+                profile.inferred_type,
+                profile.suggested_role,
+                str(profile.non_empty_count),
+                str(profile.missing_count),
+                str(profile.unique_count),
+            ]
+        )
+    table = Table(rows, colWidths=[1.35 * inch, 1.05 * inch, 1.2 * inch, 0.7 * inch, 0.65 * inch, 0.6 * inch])
+    table.setStyle(_compact_table_style())
+    return table
+
+
+def _quantitative_summary_table(summaries: dict[str, QuantitativeColumnSummary]) -> Table:
+    rows = [["Column", "Count", "Mean", "Median", "Min", "Max", "Std dev"]]
+    for summary in summaries.values():
+        rows.append(
+            [
+                _shorten(summary.column_name, 24),
+                str(summary.count),
+                _format_metric(summary.mean),
+                _format_metric(summary.median),
+                _format_metric(summary.min),
+                _format_metric(summary.max),
+                _format_metric(summary.standard_deviation),
+            ]
+        )
+    table = Table(rows, colWidths=[1.35 * inch, 0.55 * inch, 0.65 * inch, 0.65 * inch, 0.55 * inch, 0.55 * inch, 0.7 * inch])
+    table.setStyle(_compact_table_style())
+    return table
+
+
+def _compact_table_style() -> TableStyle:
+    return TableStyle(
+        [
+            ("BACKGROUND", (0, 0), (-1, 0), BRAND),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 0), (-1, -1), 7.4),
+            ("GRID", (0, 0), (-1, -1), 0.3, LINE),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ]
+    )
+
+
+def _dataset_overview_lines(
+    row_count: int | None,
+    selected_feedback_columns: list[str] | None,
+    results: list[AnalysedResponse],
+) -> list[str]:
+    lines = []
+    if row_count is not None:
+        lines.append(f"The uploaded dataset contains {row_count} row(s).")
+    if selected_feedback_columns:
+        lines.append(
+            "Analysed qualitative feedback column(s): "
+            + ", ".join(selected_feedback_columns)
+            + "."
+        )
+    lines.append(f"The report includes {len(results)} analysed text response(s).")
+    return lines
+
+
+def _segment_summary_lines(segment_summary: dict[str, SegmentColumnSummary]) -> list[str]:
+    lines: list[str] = []
+    for name, summary in list(segment_summary.items())[:6]:
+        top_values = ", ".join(
+            f"{value} ({count})" for value, count in list(summary.top_values.items())[:4]
+        )
+        lines.append(f"{name}: {summary.unique_count} segment value(s). Top values: {top_values}.")
+    return lines
+
+
+def _cross_analysis_lines(cross_analysis: CrossAnalysis) -> list[str]:
+    lines = list(cross_analysis.notable_differences)
+    if not lines and cross_analysis.sentiment_by_segment:
+        for segment_column, segment_values in list(cross_analysis.sentiment_by_segment.items())[:3]:
+            lines.append(f"Sentiment by {segment_column} is available for {len(segment_values)} segment value(s).")
+    if not lines and cross_analysis.average_rating_by_segment:
+        for segment_column, segment_values in list(cross_analysis.average_rating_by_segment.items())[:3]:
+            lines.append(f"Average rating by {segment_column} is available for {len(segment_values)} segment value(s).")
+    return lines
+
+
+def _has_cross_analysis(cross_analysis: CrossAnalysis) -> bool:
+    return bool(
+        cross_analysis.notable_differences
+        or cross_analysis.sentiment_by_segment
+        or cross_analysis.top_themes_by_segment
+        or cross_analysis.average_rating_by_segment
+    )
 
 
 def _bar_cell(count: int, max_count: int, color) -> Table:
@@ -321,6 +471,12 @@ def _risk_examples(results: list[AnalysedResponse], limit: int = 5) -> list[str]
 
 def _shorten(value: str, max_length: int) -> str:
     return value if len(value) <= max_length else f"{value[: max_length - 3]}..."
+
+
+def _format_metric(value: float | None) -> str:
+    if value is None:
+        return "-"
+    return f"{value:g}"
 
 
 def _escape(value: str) -> str:

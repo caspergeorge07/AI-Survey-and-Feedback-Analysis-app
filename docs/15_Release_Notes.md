@@ -29,6 +29,7 @@ For internal engineering history, use [13_Change_Log.md](13_Change_Log.md).
 | Version | Release Name | Status | Summary |
 |---|---|---|---|
 | 1.0 | Documentation Library Version 1 | Draft | Complete professional documentation set for product, engineering, AI, API, brand, testing, and operations. |
+| 0.5 | Frontend Foundation | Draft | Added the permanent SurveyIQ application shell, responsive navigation, top bar, and shared UI components. |
 | 0.4 | Management Report MVP | Draft | Added professional PDF management report generation. |
 | 0.3 | Larger File Analysis | Draft | Added batched AI analysis for larger survey files. |
 | 0.2 | Improved AI Analysis Workflow | Draft | Added multi-stage analysis for better themes and insights. |
@@ -45,6 +46,20 @@ SurveyIQ MVP helps users upload survey feedback files, preview their data, selec
 The MVP is designed for local validation of the core workflow, not production multi-user SaaS deployment.
 
 ## 3. Major Features
+
+### Permanent Application Shell
+
+SurveyIQ now has a reusable application shell that will support future dashboards, projects, reports, analysis workflows, and settings pages. The shell includes a left navigation sidebar, top bar, workspace context, search UI, notification/help controls, theme toggle, and user avatar placeholder.
+
+The existing MVP upload, preview, analysis, CSV, and PDF download flow remains available inside the new shell.
+
+### Responsive Navigation Foundation
+
+The shell adapts across desktop, tablet, and mobile:
+
+- Desktop uses a permanent sidebar.
+- Tablet uses a compact/collapsed sidebar pattern.
+- Mobile uses drawer navigation.
 
 ### Dataset-Level Feedback Intelligence
 
@@ -113,6 +128,9 @@ SurveyIQ can generate a management-ready PDF report with:
 - Added quantitative summaries for rating and numeric columns.
 - Added segment-level summaries and lightweight cross-analysis.
 - Added optional report sections for dataset overview, column profiles, quantitative summary, segment insights, and cross-analysis highlights.
+- Added a professional Microsoft-inspired frontend shell based on the approved design system and wireframes.
+- Added reusable frontend components for layout, cards, buttons, badges, loading states, empty states, and error states.
+- Added a visible PDF report download action when a PDF report is available.
 - Preserved frontend-compatible output while improving backend analysis quality.
 - Expanded documentation for product vision, sitemap, user journey, wireframes, design system, roadmap, engineering, AI, API, brand, testing, and operations.
 
@@ -141,7 +159,7 @@ Current MVP limitations:
 - No team collaboration.
 - No enterprise governance.
 - Larger analyses can still take several minutes.
-- PDF report download visibility may require frontend polish depending on the current UI.
+- Dashboard, Projects, Reports, AI Assistant, Settings, and other application pages are not yet built; Sprint 6 provides only the shared shell they will use.
 - AI results should be reviewed for important business decisions, especially low-confidence responses.
 - Cross-analysis is intentionally lightweight in the MVP and should be treated as directional.
 - Segment detection uses only supplied column names and values; it does not infer sensitive attributes beyond the dataset.
@@ -152,7 +170,7 @@ See [14_Known_Issues.md](14_Known_Issues.md) for the full known issues register.
 
 Planned or future capabilities:
 
-- Clearer frontend PDF download controls.
+- Executive dashboard.
 - Project organization.
 - Reports library.
 - Authentication and onboarding.
@@ -182,3 +200,4 @@ Upcoming features are subject to roadmap prioritization and should be checked ag
 | 0.1 | TBD | TBD | Initial release notes starter document. |
 | 1.0 | 2026-07-05 | Codex | Rewritten as Version 1 customer-facing release notes with feature, improvement, limitation, and upcoming-feature sections. |
 | 1.1 | 2026-07-05 | Codex | Added release notes for dataset-level feedback intelligence and multi-column analysis. |
+| 1.2 | 2026-07-05 | Codex | Added Sprint 6 frontend foundation release notes for the permanent SurveyIQ application shell. |
